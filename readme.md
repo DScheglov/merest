@@ -8,7 +8,7 @@
  - `delete`: **DELETE** [..\model-plural-name\\:id]()
 
  Additionally **merest** implements `OPTION` HTTP-method to return list of created end-points:
- - `all api options`: **OPTIONS** [..\\..]()
+ - `all api options`: **OPTIONS** [..\\]()
  - `model api options`: **OPTIONS** [..\model-plural-name\\]()
 
 To provide wide functionality of the Mongoose model **merest** allows you to expose static and instance methods of the model.
