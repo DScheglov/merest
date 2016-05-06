@@ -1,15 +1,15 @@
 ## <u>M</u>ongoose <u>E</u>xpress <u>REST</u>-full API
 
 **merest** provides easy way to expose Mongoose models as REST-full api. It creates pointed bellow end-points for each exposed model:
- - `list/search`: **GET** [..\model-plural-name\]()
- - `create`: **POST** [..\model-plural-name\]()
- - `details`: **GET** [..\model-plural-name\:id]()
- - `update`: **POST** [..\model-plural-name\:id]()
- - `delete`: **DELETE** [..\model-plural-name\:id]()
+ - `list/search`: **GET** [..\model-plural-name\\]()
+ - `create`: **POST** [..\model-plural-name\\]()
+ - `details`: **GET** [..\model-plural-name\\:id]()
+ - `update`: **POST** [..\model-plural-name\\:id]()
+ - `delete`: **DELETE** [..\model-plural-name\\:id]()
 
  Additionally **merest** implements `OPTION` HTTP-method to return list of created end-points:
  - `all api options`: **OPTIONS** [..\\..]()
- - `model api options`: **OPTIONS** [..\model-plural-name\]()
+ - `model api options`: **OPTIONS** [..\model-plural-name\\]()
 
 To provide wide functionality of the Mongoose model **merest** allows you to expose static and instance methods of the model.
 
