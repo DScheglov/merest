@@ -22,6 +22,7 @@ npm install merest
 ```shell
 git clone https://github.com/DScheglov/merest
 cd merest
+npm install
 npm test
 ```
 
