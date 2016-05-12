@@ -49,7 +49,7 @@ module.exports = exports = {
 
 api.js
 ```javascript
-var merest = require(merest);
+var merest = require('merest');
 var models = require('./models');
 
 var api = new merest.ModelAPIExpress();
@@ -95,3 +95,48 @@ Output:
   ["delete", "/api/v1/vectors/:id", "Find a Vector by Id and delete it."]
 ]
 ```
+
+### API Configuration
+'merest' supports range of options to expose Mongoose models.
+The `ModelAPIExpress.expose()` method receives the options object as the last parameter:
+```javascript
+var api = new merest.ModelAPIExpress();
+api.expose(models.Vector, {
+  options: false, // disable end-point for OPTIONS method
+  fields: {
+    // all end-points (except the exposed model methods)
+    // will return only specified fields
+    x: true,
+    y: true,
+    _id: false
+  }
+});
+```
+
+#### List of all options:
+
+**Options to control API end-points**:
+ - options: `Boolean|String|Object` -  configuration for OPTIONS HTTP-method
+ - create: `Boolean|String|Object` - configuration for Instance creation
+ - search: `Boolean|String|Object` - configuration for searching of instances-
+ - details: `Boolean|String|Object` - configuration for instance details end-point
+ - update: `Boolean|String|Object` - configuration for instance update
+ - delete: `Boolean|String|Object` - configuration for instance removing
+
+ **Options for model methods exposition**
+ - expose: `Object` - configuration for end-points that expose the instance methods defined on its schema
+ - exposeStatic:`Object` - configuration for end-points that expose static model methods defined on its schema.
+
+// default options for all methods
+path: options.path || null,
+filter: options.filter || null,
+fields: options.fields || {},
+readonly: null,
+queryFields: options.queryFields || null,
+sortFields: options.sortFields || null,
+populate: options.populate || null,
+skip: options.skip == null ? true : options.skip,
+limit: options.limit == null ? true : options.limit,
+sort: options.sort == null ? true : options.sort,
+middlewares: options.middlewares || null,
+matchId: options.matchId || options.id || '[a-f\\d]{24}'
