@@ -141,6 +141,7 @@ Content-Type: application/json; charset=utf-8
 ##### 405 - End-point is not supported:
 **merest** returns this response if requested path doesn't associated with any
 handler.
+
 **Note**: instead of common practice for HTTP **merest** return 405 HTTP Response
 code, but not 404 that means: Document was not found (or doesn't exist).
 ```shell
@@ -430,7 +431,7 @@ The appropriate end-point is allowed and keys of the value will be used to confi
 The end-point configuration options are bellow.
 
 #### End-point configuration options:
-- **path**: `String` - path to end-point overrides default path
+- **path**: `String` - `additional-path` of end-point
 - **method**: `String` -- HTTP-method to mount appropriate end-point
 - **filter**: `Object|Function` - Mongoose query-object or function that returns such object. The function receives `request` (Express Incoming Message) as only parameter. The function is executing in synchronous mode.
 - **fields**: `Object|Array|String` - Mongoose field-selection parameter
@@ -480,13 +481,137 @@ Output:
 If option **path** is assigned on the Model-routes level it will be used as end-point sub-path
 instead of Model collection name (plural).
 
-#### Options for model methods exposition
+### Options for model methods exposition
 - expose: `Object` - configuration for end-points that expose the instance methods defined on its schema
 - exposeStatic: `Object` - configuration for end-points that expose static model methods defined on its schema.
 
-### API configuration cook-book
+The keys of these options are names of the Model methods (instance or static).
+The each value of the key could be on of types: `Boolean`|`String`|`Object`
+
+```javascript
+{
+  expose: {
+    methodName: `Boolean` | `String` | `Object`,
+    methodName: `Boolean` | `String` | `Object`
+    ...
+  },
+  exposeStatic: {
+    methodName: `String` | `Object`,
+    ...
+  }
+}
+```
+
+In case of `Boolean` the value means if method-end-point is allowed (`true`) or is disabled (`false`).
+There is a special key `"*"` that allows to enable or to disable all methods together.
+```javascript
+{
+  expose: {'*': true} // all instance method will be exposed
+}
+```
+
+In case of `String` **merest** mounts controller that calls correspondent method
+to the HTTP-method specified by value (if value is on of Express-supported HTTP-methods).
+
+Otherwise (the value is not a HTTP-method) **merest** mounts appropriate controller
+to POST (or other method specified directly) and adds created method-end-point
+to list with value as description.
+
+In case of `Object` **merest** uses the value to configure method-end-point.
+
+#### Method-end-point configuration options:
+ - **method**:`String` - the HTTP method to mount method-end-point (if omitted the method-controller will be mount on the POST)
+ - **path**: `String` - the `additional-path` to mount method-controller
+ - **exec**:`Function` - the Function that will be called instead of Model instance/static
+method with context of Document or the Model. You could to call any Model method from this
+function using `this`.
+ - **middlewares**: `Function|Array` - middleware function or array of such functions. The middleware(s) will be mounted to the method-end-point route as usual express middleware
+ - **title**: `String` - the description of the end-point
+
+#### Signature of Model method that can be exposed
+The controller that calls certain Model method passes to the one two parameters:
+  - **options** - parameters sent from client (in the Query String or in Request
+    Body dependent on the HTTP method used to mount method-end-point)
+  - **callback** - Function that should be called after method processed.
+
+**Signature of callback-function**:
+```javascript
+
+/**
+ * @param  {Error} err                        exception raised in the method call
+ * @param  {Object|Array|String} dataToReturn The data to be return in Response Body
+ */
+function callback(err, dataToReturn) {
+  ...
+}
+```
+
+```javascript
+VectorSchema.methods.reverse = function(options, callback) {
+  this.x = -this.x;
+  this.y = -this.y;
+  return this.save(callback);
+}
+```
+or in case of `statics`:
+```javascript
+VectorSchema.statics.reverse = function(options, callback) {
+  var self = this;
+  self.update({}, {$mul: {x:-1, y:-1} }, {multi: true}, function (err) {
+    if (err) return done(err);
+    return self.find(callback);
+  });
+}
+```
+
+Exposing the method
+```javascript
+var api = new merest.ModelAPIExpress();
+api.expose(models.Vector, { // Model-routes level
+  fields: 'x y',
+  expose: {
+    reverse: 'get'
+  }
+});
+```
+
+--------------------------------------------------
+Getting the vector details:
+```shell
+curl -g http://localhost:1337/api/v1/vectors/573f19d35b54089f3993605f/
+```
+Output:
+```shell
+{"_id": "573f19d35b54089f3993605f", "x": 1, "y": 2}
+```
+
+--------------------------------------------------
+Calling method-end-point:
+```shell
+curl -g http://localhost:1337/api/v1/vectors/573f19d35b54089f3993605f/reverse
+```
+Output:
+```shell
+{"__v": 1, "_id": "573f19d35b54089f3993605f", "x": -1, "y": -2, "info": {"tags": []}}
+```
+
+--------------------------------------------------
+Getting the vector details again:
+```shell
+curl -g http://localhost:1337/api/v1/vectors/573f19d35b54089f3993605f/
+```
+Output:
+```shell
+{"_id": "573f19d35b54089f3993605f", "x": -1, "y": -2}
+```
+
+Lookout the **merest** doesn't clean the response from exposed methods.
+So, you should do it by your own code.
+
+### Cook-book
 
  - [Get started](https://github.com/DScheglov/merest/tree/master/examples/simplest-usage)
  - [Read-only exposition](https://github.com/DScheglov/merest/tree/master/examples/read-only)
  - [Exposition with filtering](https://github.com/DScheglov/merest/tree/master/examples/vertical-vectors)
  - [Filtering on insertion](https://github.com/DScheglov/merest/tree/master/examples/filtering-on-insertion)
+ - [Exposition of Instance method](https://github.com/DScheglov/merest/tree/master/examples/instance-method)
