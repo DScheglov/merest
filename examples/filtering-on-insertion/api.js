@@ -13,11 +13,11 @@ api.expose(models.Vector, {
   }
 });
 
+module.exports = exports = api;
+
 function isVerticalVector(req, res, next) {
   if (req.body.x !== 0) {
     return next(new merest.ModelAPIError(422, 'The vector is not vertical'));
   }
   next();
 }
-
-module.exports = exports = api;

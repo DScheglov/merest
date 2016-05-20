@@ -1,13 +1,13 @@
 ## <u>M</u>ongoose <u>E</u>xpress <u>REST</u>-full API
 
 **merest** provides easy way to expose Mongoose models as REST-full api. It creates pointed bellow end-points for each exposed model:
- - `list/search`: **GET** [..\model-plural-name\\ ]()
- - `create`: **POST** [..\model-plural-name\\ ]()
- - `details`: **GET** [..\model-plural-name\\:id]()
- - `update`: **POST** [..\model-plural-name\\:id]()
- - `delete`: **DELETE** [..\model-plural-name\\:id]()
+ - `list/search`: **GET** [..\\model-plural-name\\ ]()
+ - `create`: **POST** [..\\model-plural-name\\ ]()
+ - `details`: **GET** [..\\model-plural-name\\:id]()
+ - `update`: **POST** [..\\model-plural-name\\:id]()
+ - `delete`: **DELETE** [..\\model-plural-name\\:id]()
 
- Additionally **merest** implements `OPTION` HTTP-method to return list of created end-points:
+ Additionally **merest** implements `OPTIONS` HTTP-method to return list of created end-points:
  - `all api options`: **OPTIONS** [..\\ ]()
  - `model api options`: **OPTIONS** [..\model-plural-name\\ ]()
 
@@ -98,35 +98,117 @@ Output:
 ```
 ---------------------------------------------------
 
-#### Requests and Responses:
+### Requests and Responses:
 
+#### The paths of REST end-points:
+
+The end-point path consists of three parts:
+/[`api-mount-path`/]`model-exposition-path`/[`additional-path`/]
+
+ - **api-mount-path** -- the path that assigned in the `use` method called to
+   bind the ModelAPIExpress to your main application. This path could be omitted
+   in two cases: 1) the path omitted in the `use` method, or 2) the ModelAPIExpress
+   is main application (it's also possible)
+ - **model-exposition-path** - by default it is the collection name of exposed
+   Model. This path could be overrided by assigning `path` api-option on the
+   Model-routes level (see API-configuration)
+ - **additional-path** - by default it is omitted. It could be assigned by
+   specifying `path` api-option on the end-point level (see API-configuration)
+
+**merest** grants that assigned by default paths for different end-points are not
+intercepted, but it doesn't control the interception for custom assigned paths.
+
+
+#### Common responses
+
+##### 404 - Document was not found (or doesn't exist)
+**merest** returns this response if it couldn't find the Document (including
+just created) by id in the url and/or doesn't match the assigned `filter`
+api-option
+
+```shell
+Status: 404
+Content-Type: application/json; charset=utf-8
+
+{"error": true, "code": 404, "message": "..."}
+```
+
+##### 405 - End-point is not supported:
+**merest** returns this response if requested path doesn't associated with any
+handler.
+**Note**: instead of common practice for HTTP **merest** return 405 HTTP Response
+code, but not 404 that means: Document was not found (or doesn't exist).
+```shell
+Status: 405
+Content-Type: application/json; charset=utf-8
+
+{"error": true, "code": 405, "message": "Not Supported"}
+```
+
+##### 422 - Validation error
+```shell
+Status: 422
+Content-Type: application/json; charset=utf-8
+
+{
+  "error": true,
+  "code": 422,
+  "message": "..."
+  [,"errors": {
+    ...
+  }]
+  [,"stack": [
+    ...
+  ]]
+}
+```
+The fields `errors` and `stack` are optional.
+
+--------------------------------------------------------------
 ##### End-point `options`:
+Returns list of available end-points with short description.
+
 Request:
-
-Header / Body | Value | Description
-------------- | ------- | ---------------
-X-HTTP-Method-Override | `OPTIONS` | You should add this header if your client doesn't support OPTIONS method directly
-Body | empty |
-
+```shell
+OPTIONS /end-point-path/ HTTP/1.1
+HOST: hostname:port
+```
+If you client doesn't support OPTIONS HTTP-method directly, use this message:
+```shell
+POST /end-point-path/ HTTP/1.1
+HOST: hostname:port
+X-HTTP-Method-Override: OPTIONS
+```
 
 Responses:
 
-HTTP Code | Response body | Description
---------- | ------------- | -----------
-200 | Array of end-points | List of mounted end-points
-405 | `{"error": true, "code": 405, "message": "Not Supported"}` | If end-point is disabled
+Success:
+```shell
+Status: 200
+Content-Type: application/json; charset=utf-8
+
+[
+  ["method", "path", "descriptions"],
+  ["method", "path", "descriptions"],
+  ...
+  ["method", "path", "descriptions"]
+]
+```
+
+Other responses:
+ - 405 - End-point is not supported
 
 -------------------------------------------------
 ##### End-point `search`:
+Returns the list of Documents that satisfy query passed to call.
+
 Request for end-point mounted on `GET`:
+```shell
+GET /end-point-path/[?field1=value1&field2=value2&_sort=fieldName&_limit=number&_skip=number] HTTP/1.1
+HOST: hostname:port
+```
 
-Header / Body | Value
-------------- | -----
-Headers | none |
-Query | Query String
-Body | empty |
-
-Query String could contain pares fieldName=value separated by the `&`
+Query String could contain pares field=value separated by the `&`
 and three additional parameters:
 - _sort=fieldName
 - _limit=maximum number of documents in Response
@@ -135,98 +217,164 @@ and three additional parameters:
 These parameters (all of them or any of them) will be ignored if
 appropriate API-configuration option will be assigned to `false`
 
+To use all **MongoDB** query opportunities you could mount the `create` end-point
+on the POST HTTP-method and specify `additional-path`.
+
+In security reasons I don't recommend to do so. The better way is to extend Model
+with static methods that accepts only necessary parameters and builds safe query.
+However **merest** allows you to mount `search` end-point on POST method and
+form query on the client-side.
+
 Request for end-point mounted on `POST`:
+```shell
+POST /end-point-path/[?_sort=fieldName&_limit=number&_skip=number] HTTP/1.1
+HOST: hostname:port
+Content-Type: application/json
 
-Header / Body | Value | Description
-------------- | ----- | -----------
-Content-Type | application/json |
-Query | | additional parameters of Query String (see above)
-Body | `Object` | Mongoose query object.
+<Mongoose Query-Object>
+```
 
-Responses:
+Success:
+```shell
+Status: 200
+Content-Type: application/json; charset=utf-8
 
-HTTP Code | Response body | Description
---------- | ------------- | -----------
-200 | `Array` | Array of found documents (Empty if no document was found)
-405 | `{"error": true, "code": 405, "message": "Not Supported"}` | If end-point is disabled
+[
+  { ... },
+  { ... }
+  ...
+  { ... }
+]
+```
+If no one Document found, the **merest** returns empty Array
 
+Other responses:
+ - 405 - End-point is not supported
 
 -------------------------------------------------
 ##### End-point `details`:
-Request for end-point mounted on `GET`:
+Returns Document of the exposed Model by its id specified in the URL.
 
-Header / Body | Value
-------------- | -----
-Headers | none |
-Body | empty |
+Request:
+```shell
+GET /end-point-path/:id HTTP/1.1
+HOST: hostname:port
+```
 
 Responses:
 
-HTTP Code | Response body | Description
---------- | ------------- | -----------
-200 | `Object` | Document that was found by id
-404 | `{"error": true, "code": 405, "message": "..."}` | Object was not found by id in the url and/or doesn't match the assigned `filter` option
-405 | `{"error": true, "code": 405, "message": "Not Supported"}` | If end-point is disabled
+Success:
+```shell
+Status: 200
+Content-Type: application/json; charset=utf-8
 
+{ ... }
+```
+
+Other responses:
+ - 404 - Document was not found (or doesn't exist)
+ - 405 - End-point is not supported
 
 ---------------------------------------------------
 ##### End-point `create`:
-Request:
+Creates new Document, finds it and returns to the client.
 
-Header / Body | Value | Description
-------------- | ----- | -----------
-Content-Type | application/json |
-Body | `Object` | Mongoose Model object.
+Request:
+```shell
+POST /end-point-path/ HTTP/1.1
+HOST: hostname:port
+Content-Type: application/json
+
+<Mongoose Model Object>
+```
 
 Responses:
 
-HTTP Code | Response body | Description
---------- | ------------- | -----------
-201 | `Object` | Created object
-404 | `{"error": true, "code": 404, "message": "..."}` | Created object doesn't match `filter` specified on the exposition
-405 | `{"error": true, "code": 405, "message": "Not Supported"}` | If end-point is disabled
-422 | `{"error": true, "code": 422, "message": "...", "errors": {...}}` | Description of validation error
+Success:
+```shell
+Status: 200
+Content-Type: application/json; charset=utf-8
+
+{ ... }
+```
+
+406 - Method doesn't allow to update object
+```shell
+Status: 406
+Content-Type: application/json; charset=utf-8
+
+{
+  "error": true,
+  "code": 406,
+  "message": "This method doesn't allow to update a(n) ${Model.name}"
+}
+```
+
+Other responses:
+ - 404 - Document was not found (or doesn't exist)
+ - 405 - End-point is not supported
+ - 422 - Validation error
+
+The Response with status code 404 could be returned if created object doesn't
+match `filter` api-option specified on the exposition.
 
 ---------------------------------------------------
 ##### End-point `update`:
-Request:
+Updates the existing Document, returns it to the client.
 
-Header / Body | Value | Description
-------------- | ----- | -----------
-Content-Type | application/json |
-Body | `Object` | Mongoose update object (`$set`-object).
+Request:
+```shell
+POST /end-point-path/:id HTTP/1.1
+HOST: hostname:port
+Content-Type: application/json
+
+<Mongoose $set-object>
+```
 
 Responses:
 
-HTTP Code | Response body | Description
---------- | ------------- | -----------
-200 | `Object` | Updated object
-404 | `{"error": true, "code": 404, "message": "..."}` | Object was not found by id in the url and/or doesn't match the assigned `filter` option
-405 | `{"error": true, "code": 405, "message": "Not Supported"}` | If end-point is disabled
-422 | `{"error": true, "code": 422, "message": "...", "errors": {...}}` | Description of validation error
+Success:
+```shell
+Status: 200
+Content-Type: application/json; charset=utf-8
 
+{ ... }
+```
+
+Other responses:
+ - 404 - Document was not found (or doesn't exist)
+ - 405 - End-point is not supported
+ - 422 - Validation error
 
 ---------------------------------------------------
 ##### End-point `delete`:
-Request:
+Finds Document by id specified in the URL, deletes it and returns empty
+JSON-object to the client.
 
-Header / Body | Value
-------------- | -----
-Headers | none
-Body | Empty
+Request:
+```shell
+DELETE /end-point-path/:id HTTP/1.1
+HOST: hostname:port
+```
 
 Responses:
 
-HTTP Code | Response body | Description
---------- | ------------- | -----------
-200 | `{}` | Empty object
-404 | `{"error": true, "code": 404, "message": "..."}` | Object was not found by id in the url and/or doesn't match the assigned `filter` option
-405 | `{"error": true, "code": 405, "message": "Not Supported"}` | If end-point is disabled
+Success:
+```shell
+Status: 200
+Content-Type: application/json; charset=utf-8
 
+{}
+```
+
+Other responses:
+ - 404 - Document was not found (or doesn't exist)
+ - 405 - End-point is not supported
 
 ------------------------------------------------------------------
 ### API Configuration
-'merest' supports range of options to expose Mongoose models.
+
+**merest** supports range of options to expose Mongoose models.
 The `ModelAPIExpress.expose()` method receives the options object as the last parameter:
 ```javascript
 var api = new merest.ModelAPIExpress();
@@ -242,9 +390,9 @@ api.expose(models.Vector, {
 });
 ```
 
-#### Supported API options:
+### Supported API options:
 
-#####Options to control API end-points:
+#### Options to control API end-points:
  - **options**: `Boolean|String|Object` -  configuration for OPTIONS HTTP-method
  - **create**: `Boolean|String|Object` - configuration for Instance creation
  - **search**: `Boolean|String|Object` - configuration for searching of instances-
@@ -269,7 +417,7 @@ The appropriate end-point is allowed and keys of the value will be used to confi
 
 The end-point configuration options are bellow.
 
-##### End-point configuration options:
+#### End-point configuration options:
 - **path**: `String` - path to end-point overrides default path
 - **method**: `String` -- HTTP-method to mount appropriate end-point
 - **filter**: `Object|Function` - Mongoose query-object or function that returns such object. The function receives `request` (Express Incoming Message) as only parameter. The function is executing in synchronous mode.
@@ -320,149 +468,13 @@ Output:
 If option **path** is assigned on the Model-routes level it will be used as end-point sub-path
 instead of Model collection name (plural).
 
-#### API configuration cook-book
-
-##### Read only exposition
-```javascript
-var api = new merest.ModelAPIExpress();
-api.expose(models.Vector, {
-  create: false,
-  update: false,
-  delete: false
-});
-```
-Calling API:
-```shell
-curl -X OPTIONS http://localhost:1337/api/v1/
-```
-Output:
-```shell
-[
-  ["options", "/api/v1/", "List all end-points of current application"],
-  ["options", "/api/v1/vectors/", "List API-options for vectors"],
-  ["get", "/api/v1/vectors/", "List/Search all vectors"],
-  ["get", "/api/v1/vectors/:id", "Find a Vector by Id"]
-]
-```
-
-##### Exposition with filtering
-
-```javascript
-var api = new merest.ModelAPIExpress();
-api.expose(models.Vector, {
-  path: '/vertical-vectors',
-  filter: {
-    x: 0
-  },
-  fields: '-_id'
-});
-```
-Fixtures for this example:
-```javascript
-module.exports = exports = [
-  {x: 1, y: 2},
-  {x: 0, y: 3},
-  {x: -1, y: 5},
-  {x: 0, y: -1},
-  {x: 3, y: 0},
-  {x: 3, y: 3}
-]
-```
-
-Getting API-options:
-```shell
-curl -X OPTIONS http://localhost:1337/api/v1/
-```
-Output:
-```shell
-[
-  ["options", "/api/v1/", "List all end-points of current application"],
-  ["options", "/api/v1/vertical-vectors/", "List API-options for vectors"],
-  ["get", "/api/v1/vertical-vectors/", "List/Search all vectors"],
-  ["post", "/api/v1/vertical-vectors/", "Create a new Vector"],
-  ["get", "/api/v1/vertical-vectors/:id", "Find a Vector by Id"],
-  ["post", "/api/v1/vertical-vectors/:id", "Find a Vector by Id and update it (particulary)"],
-  ["delete", "/api/v1/vertical-vectors/:id", "Find a Vector by Id and delete it."]
-]
-```
-Listing all vertical vectors:
-```shell
-сurl -g http://localhost:1337/api/v1/vertical-vectors
-```
-Output:
-```shell
-[
-  {"x": 0, "y": 3},
-  {"x": 0, "y": -1}
-]
-```
-
-Posting new vertical vector
-```shell
-curl -H "Content-Type: application/json" -X POST -d '{"x": 0, "y": 777}' http://localhost:1337/api/v1/vertical-vectors
-```
-Output:
-```shell
-{"x": 0, "y": 777, "__v": 0, "info": {"tags":[]}}
-```
-
-**WARNING** Posting not vertical vector
-```shell
-curl -H "Content-Type: application/json" -X POST -d '{"x": 7, "y": -123}' http://localhost:1337/api/v1/vertical-vectors
-```
-Output:
-```shell
-{"error": true, "code": 404, "message": "The Vector was not found by 573c796d514ee310081c7d42"}
-```
-
-The **merest** created new vector and then tries to find it by `_id` and with filter specified
-on the exposition stage. According that the new vector is not a vertical, **merest** couldn't
-find it and returns 404 HTTP Response code, however the vector was created successfully.
-
-If such behaviour is unwanted (in major cases it is) -- see the simplest way around
-
-##### Filtering on insertion
-```javascript
-var api = new merest.ModelAPIExpress();
-api.expose(models.Vector, {
-  path: '/vertical-vectors',
-  filter: {
-    x: 0
-  },
-  fields: '-_id x y',
-  create: {
-    middlewares: isVerticalVector
-  }
-});
-
-function isVerticalVector(req, res, next) {
-  if (req.body.x !== 0) {
-    return next(new merest.ModelAPIError(422, 'The vector is not vertical'));
-  }
-  next();
-}
-```
-
-Posting new vertical vector
-```shell
-curl -H "Content-Type: application/json" -X POST -d '{"x": 0, "y": 777}' http://localhost:1337/api/v1/vertical-vectors
-```
-Output:
-```shell
-{"x": 0, "y": 777}
-```
-
-**WARNING** Posting not vertical vector
-```shell
-curl -H "Content-Type: application/json" -X POST -d '{"x": 7, "y": -123}' http://localhost:1337/api/v1/vertical-vectors
-```
-Output:
-```shell
-{"error": true, "code": 422, "message": "The vector is not vertical"}
-```
-
-
-
-##### Options for model methods exposition
+#### Options for model methods exposition
 - expose: `Object` - configuration for end-points that expose the instance methods defined on its schema
-- exposeStatic:`Object` - configuration for end-points that expose static model methods defined on its schema.
+- exposeStatic: `Object` - configuration for end-points that expose static model methods defined on its schema.
+
+### API configuration cook-book
+
+ - [Get started](https://github.com/DScheglov/merest/tree/master/examples/simplest-usage)
+ - [Read-only exposition](https://github.com/DScheglov/merest/tree/master/examples/read-only)
+ - [Exposition with filtering](https://github.com/DScheglov/merest/tree/master/examples/vertical-vectors)
+ - [Filtering on insertion](https://github.com/DScheglov/merest/tree/master/examples/filtering-on-insertion)
