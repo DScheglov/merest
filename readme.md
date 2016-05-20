@@ -1,15 +1,17 @@
 ## <u>M</u>ongoose <u>E</u>xpress <u>REST</u>-full API
 
+##### [Cook book](#cook-book) | [Requests and responses](#requests_responses) | [API configuration](#api_config) | [Methods API](#methods_api) | [To Do](#to-do)
+
 **merest** provides easy way to expose Mongoose models as REST-full api. It creates pointed bellow end-points for each exposed model:
- - `list/search`: **GET** [..\\model-plural-name\\ ]()
- - `create`: **POST** [..\\model-plural-name\\ ]()
- - `details`: **GET** [..\\model-plural-name\\:id]()
- - `update`: **POST** [..\\model-plural-name\\:id]()
- - `delete`: **DELETE** [..\\model-plural-name\\:id]()
+ - `list/search`: **GET** [..\\model-plural-name\\ ](#ep_search)
+ - `create`: **POST** [..\\model-plural-name\\ ](#ep_create)
+ - `details`: **GET** [..\\model-plural-name\\:id](#ep_details)
+ - `update`: **POST** [..\\model-plural-name\\:id](#ep_update)
+ - `delete`: **DELETE** [..\\model-plural-name\\:id](#ep_details)
 
  Additionally **merest** implements `OPTIONS` HTTP-method to return list of created end-points:
- - `all api options`: **OPTIONS** [..\\ ]()
- - `model api options`: **OPTIONS** [..\model-plural-name\\ ]()
+ - `all api options`: **OPTIONS** [..\\ ](#ep_options)
+ - `model api options`: **OPTIONS** [..\model-plural-name\\ ](#ep_options)
 
 To provide wide functionality of the Mongoose model **merest** allows you to expose static and instance methods of the model.
 
@@ -100,9 +102,21 @@ Output:
 Detailed example:
 [Get started](https://github.com/DScheglov/merest/tree/master/examples/simplest-usage)
 
+<a name="cook-book"></a>
+
+-------------------------------------------------------------------------------
+### Cook-book
+
+ - [Get started](https://github.com/DScheglov/merest/tree/master/examples/simplest-usage)
+ - [Read-only exposition](https://github.com/DScheglov/merest/tree/master/examples/read-only)
+ - [Exposition with filtering](https://github.com/DScheglov/merest/tree/master/examples/vertical-vectors)
+ - [Filtering on insertion](https://github.com/DScheglov/merest/tree/master/examples/filtering-on-insertion)
+ - [Exposition of Instance method](https://github.com/DScheglov/merest/tree/master/examples/instance-method)
+ - [Exposition of static method](https://github.com/DScheglov/merest/tree/master/examples/static-method)
+
 
 ---------------------------------------------------
-
+<a name="requests_responses"></a>
 ### Requests and Responses:
 
 #### The paths of REST end-points:
@@ -123,7 +137,7 @@ The end-point path consists of three parts:
 **merest** grants that assigned by default paths for different end-points are not
 intercepted, but it doesn't control the interception for custom assigned paths.
 
-
+<a name="common_responses"></a>
 #### Common responses
 
 ##### 404 - Document was not found (or doesn't exist)
@@ -170,6 +184,8 @@ Content-Type: application/json; charset=utf-8
 ```
 The fields `errors` and `stack` are optional.
 
+<a name="ep_options"></a>
+
 --------------------------------------------------------------
 ##### End-point `options`:
 Returns list of available end-points with short description.
@@ -203,6 +219,8 @@ Content-Type: application/json; charset=utf-8
 
 Other responses:
  - 405 - End-point is not supported
+
+<a name="ep_search"></a>
 
 -------------------------------------------------
 ##### End-point `search`:
@@ -257,6 +275,8 @@ If no one Document found, the **merest** returns empty Array
 Other responses:
  - 405 - End-point is not supported
 
+<a name="ep_details"></a>
+
 -------------------------------------------------
 ##### End-point `details`:
 Returns Document of the exposed Model by its id specified in the URL.
@@ -280,6 +300,8 @@ Content-Type: application/json; charset=utf-8
 Other responses:
  - 404 - Document was not found (or doesn't exist)
  - 405 - End-point is not supported
+
+<a name="ep_create"></a>
 
 ---------------------------------------------------
 ##### End-point `create`:
@@ -324,6 +346,8 @@ Other responses:
 The Response with status code 404 could be returned if created object doesn't
 match `filter` api-option specified on the exposition.
 
+<a name="ep_update"></a>
+
 ---------------------------------------------------
 ##### End-point `update`:
 Updates the existing Document, returns it to the client.
@@ -351,6 +375,8 @@ Other responses:
  - 404 - Document was not found (or doesn't exist)
  - 405 - End-point is not supported
  - 422 - Validation error
+
+<a name="ep_delete"></a>
 
 ---------------------------------------------------
 ##### End-point `delete`:
@@ -383,6 +409,8 @@ Content-Type: application/json; charset=utf-8
 Other responses:
  - 404 - Document was not found (or doesn't exist)
  - 405 - End-point is not supported
+
+<a name="api_config"></a>
 
 ------------------------------------------------------------------
 ### API Configuration
@@ -481,6 +509,9 @@ Output:
 If option **path** is assigned on the Model-routes level it will be used as end-point sub-path
 instead of Model collection name (plural).
 
+<a name="methods_api"></a>
+
+-------------------------------------------------------------------------
 ### Options for model methods exposition
 - expose: `Object` - configuration for end-points that expose the instance methods defined on its schema
 - exposeStatic: `Object` - configuration for end-points that expose static model methods defined on its schema.
@@ -608,11 +639,12 @@ Output:
 Lookout the **merest** doesn't clean the response from exposed methods.
 So, you should do it by your own code.
 
-### Cook-book
+<a name="to-do"></a>
 
- - [Get started](https://github.com/DScheglov/merest/tree/master/examples/simplest-usage)
- - [Read-only exposition](https://github.com/DScheglov/merest/tree/master/examples/read-only)
- - [Exposition with filtering](https://github.com/DScheglov/merest/tree/master/examples/vertical-vectors)
- - [Filtering on insertion](https://github.com/DScheglov/merest/tree/master/examples/filtering-on-insertion)
- - [Exposition of Instance method](https://github.com/DScheglov/merest/tree/master/examples/instance-method)
- - [Exposition of static method](https://github.com/DScheglov/merest/tree/master/examples/static-method)
+-------------------------------------------------------------------------------
+### To do:
+ - extend Cook-book
+ - add `transformResponse` option
+ - extend query support for method GET (`field__gt`, `field__ne`, `field__in` etc.)
+ - extend `options` controller with supporting **swagger**
+ - extend `options` controller with supporting **blueprint**
