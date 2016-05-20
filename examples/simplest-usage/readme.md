@@ -67,7 +67,7 @@ node server
 ```
 Output:
 ```shell
-Express server listening on port 1337
+Express server is listening on port 1337
 ```
 -----------------------------------------------------------
 Calling API:
@@ -117,10 +117,9 @@ Output:
 ]
 ```
 
-
-Also you can run this example in this way:
 ----------------------------------------------
-Running example:
+Also you can run this example in this way:
+
 ```shell
 git clone https://github.com/DScheglov/merest.git
 cd merest
@@ -129,5 +128,5 @@ node examples/simplest-usage/server
 ```
 Output:
 ```shell
-Express server listening on port 1337
+Express server is listening on port 1337
 ```

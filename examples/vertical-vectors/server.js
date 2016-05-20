@@ -19,6 +19,6 @@ mongoose.model('Vector').collection.insert(require('./fixtures'), function (err)
   app.use('/api/v1', api); // exposing our API
 
   app.listen(1337, function(){
-    console.log('Express server listening on port 1337');
+    console.log('Express server is listening on port 1337');
   });
 });

@@ -21,7 +21,7 @@ node examples/read-only/server
 ```
 Output:
 ```shell
-Express server listening on port 1337
+Express server is listening on port 1337
 ```
 --------------------------------------------------
 Getting options:

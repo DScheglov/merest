@@ -36,7 +36,7 @@ node examples/vertical-vectors/server
 ```
 Output:
 ```shell
-Express server listening on port 1337
+Express server is listening on port 1337
 ```
 
 ----------------------------------------------

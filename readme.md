@@ -96,6 +96,9 @@ Output:
   ["delete", "/api/v1/vectors/:id", "Find a Vector by Id and delete it."]
 ]
 ```
+
+Detailed example:
+[Get started](https://github.com/DScheglov/merest/tree/master/examples/simplest-usage)
 ---------------------------------------------------
 
 ### Requests and Responses:
@@ -355,6 +358,13 @@ Request:
 ```shell
 DELETE /end-point-path/:id HTTP/1.1
 HOST: hostname:port
+```
+
+If you client doesn't support DELETE HTTP-method directly, use this message:
+```shell
+POST /end-point-path/ HTTP/1.1
+HOST: hostname:port
+X-HTTP-Method-Override: DELETE
 ```
 
 Responses:
