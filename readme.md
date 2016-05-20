@@ -99,6 +99,8 @@ Output:
 
 Detailed example:
 [Get started](https://github.com/DScheglov/merest/tree/master/examples/simplest-usage)
+
+
 ---------------------------------------------------
 
 ### Requests and Responses:
