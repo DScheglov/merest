@@ -615,3 +615,4 @@ So, you should do it by your own code.
  - [Exposition with filtering](https://github.com/DScheglov/merest/tree/master/examples/vertical-vectors)
  - [Filtering on insertion](https://github.com/DScheglov/merest/tree/master/examples/filtering-on-insertion)
  - [Exposition of Instance method](https://github.com/DScheglov/merest/tree/master/examples/instance-method)
+ - [Exposition of static method](https://github.com/DScheglov/merest/tree/master/examples/static-method)

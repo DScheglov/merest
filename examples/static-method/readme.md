@@ -1,23 +1,24 @@
-##### Exposition of instance method
+##### Exposition of static method
 
-Let's guess we need to call some model method from client side. For example
-in our case with vectors we have method `reverse` that turn vector on 180 degrees.
+**merest** allows you to expose static Model method so simple as instance method.
 
-So, update the `model.js` with adding code:
+`model.js` updates:
 ```javascript
-VectorSchema.methods.reverse = function(options, callback) {
-  this.x = -this.x;
-  this.y = -this.y;
-  return this.save(callback);
+VectorSchema.statics.reverse = function(options, done) {
+  var self = this;
+  self.update(options, {$mul: {x:-1, y:-1} }, {multi: true}, function (err) {
+    if (err) return done(err);
+    return self.find(options, done);
+  });
 }
 ```
 
-**merest** allows to expose this method in easy way -- just update `api.js`:
+Updating `api.js`:
 ```javascript
 var api = new merest.ModelAPIExpress();
 api.expose(models.Vector, {
   fields: 'x y',
-  expose: {
+  exposeStatic: {
     reverse: 'get' // mounting controller to the GET
   }
 });
@@ -26,7 +27,7 @@ api.expose(models.Vector, {
 In this example we will use the fixtures (`fixtures.js`):
 ```javascript
 module.exports = exports = [
-  {x: 1, y: 2, _id: ObjectId('573f19d35b54089f3993605f')},
+  {x: 1, y: 2},
   {x: 0, y: 3}
 ]
 ```
@@ -37,7 +38,7 @@ Running example:
 git clone https://github.com/DScheglov/merest.git
 cd merest
 npm install
-node examples/instance-method/server
+node examples/static-method/server
 ```
 Output:
 ```shell
@@ -56,10 +57,10 @@ Output:
   ["options", "/api/v1/vectors/", "List API-options for vectors"],
   ["get", "/api/v1/vectors/", "List/Search all vectors"],
   ["post", "/api/v1/vectors/", "Create a new Vector"],
+  ["get", "/api/v1/vectors/reverse", "Vector.statics.reverse"],
   ["get", "/api/v1/vectors/:id", "Find a Vector by Id"],
   ["post", "/api/v1/vectors/:id", "Find a Vector by Id and update it (particulary)"],
-  ["delete", "/api/v1/vectors/:id", "Find a Vector by Id and delete it."],
-  ["get", "/api/v1/vectors/:id/reverse", "Vector.reverse"]
+  ["delete", "/api/v1/vectors/:id", "Find a Vector by Id and delete it."]
 ]
 ```
 
@@ -71,28 +72,49 @@ curl -g http://localhost:1337/api/v1/vectors
 Output:
 ```shell
 [
-  {"_id": "573f19d35b54089f3993605f", "x":1, "y": 2},
-  {"_id": "573f38e3bb647a173f0765d3", "x":0, "y": 3}]
+  {"_id": "...", "x":1, "y": 2},
+  {"_id": "...", "x":0, "y": 3}]
 ```
 
 --------------------------------------------------
 Calling method-end-point:
 ```shell
-curl -g http://localhost:1337/api/v1/vectors/573f19d35b54089f3993605f/reverse
+curl -g http://localhost:1337/api/v1/vectors/reverse
 ```
 Output:
 ```shell
-{"__v": 1, "_id": "573f19d35b54089f3993605f", "x": -1, "y": -2, "info": {"tags": []}}
+[
+  {"_id": "...", "x": -1,"y": -2,"info": {"tags": []}},
+  {"_id": "...", "x": 0,"y": -3,"info": {"tags": []}}
+]
 ```
 Lookout the **merest** doesn't clean the response from exposed methods.
 So, you should do it by your own code.
 
 --------------------------------------------------
-Getting the vector details:
+Getting the vectors again:
 ```shell
-curl -g http://localhost:1337/api/v1/vectors/573f19d35b54089f3993605f/
+curl -g http://localhost:1337/api/v1/vectors/
 ```
 Output:
 ```shell
-{"_id": "573f19d35b54089f3993605f", "x": -1, "y": -2}
+[
+  {"_id": "573f423c0443c93a40d2eebb", "x" :-1,"y": -2},
+  {"_id": "573f423c0443c93a40d2eebc", "x" :0,"y": -3}
+]
+```
+
+The method implementations allows us to reverse only subset of vectors,
+specifying query on method-end-point request:
+
+--------------------------------------------------
+Reversing only vertical vectors (call this URL after all previous cases):
+```shell
+curl -g http://localhost:1337/api/v1/vectors/reverse?x=0
+```
+Output:
+```shell
+[
+  {"_id": "...", "x": 0,"y": 3,"info": {"tags": []}}
+]
 ```
