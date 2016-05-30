@@ -1,4 +1,4 @@
-### Get started
+### Getting started
 
 The simplest way to use **merest** is described bellow.
 

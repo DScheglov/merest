@@ -3,7 +3,7 @@
 ##### [Cook book](#cook-book) | [Requests and responses](#requests_responses) | [API configuration](#api_config) | [Methods API](#methods_api) | [To Do](#to-do)
 
 **merest** provides easy way to expose Mongoose models as REST-full api. It creates pointed bellow end-points for each exposed model:
- - `list/search`: **GET** [..\\model-plural-name\\ ](#ep_search)
+ - `search`: **GET** [..\\model-plural-name\\ ](#ep_search)
  - `create`: **POST** [..\\model-plural-name\\ ](#ep_create)
  - `details`: **GET** [..\\model-plural-name\\:id](#ep_details)
  - `update`: **POST** [..\\model-plural-name\\:id](#ep_update)
@@ -19,6 +19,16 @@ To provide wide functionality of the Mongoose model **merest** allows you to exp
 ```shell
 npm install merest
 ```
+
+**merest** doesn't install Mongoose or Express in production environment.
+It is crucial to embed API into your project correctly. You should to install
+these components by yourself.
+
+Recommended components:
+```shell
+npm install --save mongoose express body-parser method-override
+```
+
 
 ### Development
 ```shell
@@ -100,15 +110,16 @@ Output:
 ```
 
 Detailed example:
-[Get started](https://github.com/DScheglov/merest/tree/master/examples/simplest-usage)
+[Getting started](https://github.com/DScheglov/merest/tree/master/examples/simplest-usage)
 
 <a name="cook-book"></a>
 
 -------------------------------------------------------------------------------
 ### Cook-book
 
- - [Get started](https://github.com/DScheglov/merest/tree/master/examples/simplest-usage)
+ - [Getting started](https://github.com/DScheglov/merest/tree/master/examples/simplest-usage)
  - [Read-only exposition](https://github.com/DScheglov/merest/tree/master/examples/read-only)
+ - [Population](https://github.com/DScheglov/merest/tree/master/examples/population)
  - [Exposition with filtering](https://github.com/DScheglov/merest/tree/master/examples/vertical-vectors)
  - [Filtering on insertion](https://github.com/DScheglov/merest/tree/master/examples/filtering-on-insertion)
  - [Exposition of Instance method](https://github.com/DScheglov/merest/tree/master/examples/instance-method)
