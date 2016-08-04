@@ -14,21 +14,38 @@ var testPort = 30023;
 var testUrl = 'http://localhost:' + testPort;
 
 function meta() {
+
   var newBody = {
     meta: {
-      status: this.status
+      status: this.status,
+      operation: this.apiMethod
     }
   };
+
+  if (this.apiStaticMethod) {
+    newBody.meta.staticMethod = this.apiStaticMethod;
+  };
+
+  if (this.apiInstanceMethod) {
+    newBody.meta.instanceMethod = this.apiInstanceMethod;
+  };
+
+  if (this.modelAPI) {
+    newBody.meta.model = this.modelAPI.model.modelName;
+  };
+
   if (this.status >= 300) {
     newBody.meta.error = true;
-    newBody.errors = [this.body];
+    newBody.meta.message = this.body.message;
+    newBody.errors = this.body.errors || [this.body];
   } else {
     newBody.data = this.body;
     if (util.isArray(this.body)) {
       newBody.meta.isArray = true;
       newBody.meta.count = this.body.length;
-    }
-  }
+    };
+  };
+
   this.status = this.status >= 300 ? 200 : this.status;
   this.body = newBody;
 }
@@ -44,7 +61,10 @@ describe("Response transformation", function (done) {
       }),
       function (next) {
         var modelAPI = new api.ModelAPIExpress({transformResponse: meta});
-        modelAPI.expose(models.Person);
+        modelAPI.expose(models.Person, {
+          expose: {'*': true},
+          exposeStatic: {'*': true}
+        });
         app.use('/api/v1/', modelAPI);
         app.listen(testPort, next);
       }
@@ -56,7 +76,7 @@ describe("Response transformation", function (done) {
   });
 
 
-  it("OPTIONS /api/v1 200 -- get options for all API", function (done) {
+  it("OPTIONS /api/v1 200 -- should respond with meta data", function (done) {
     request.post({
       url: util.format('%s/api/v1', testUrl),
       headers: {
@@ -68,13 +88,20 @@ describe("Response transformation", function (done) {
       if (typeof(body) == "string") {
         body = JSON.parse(body);
       }
-      assert.equal(body.length, 7);
+      assert.ok(body.meta);
+      assert.equal(body.meta.status, 200);
+      assert.equal(body.meta.operation, 'options');
+      assert.ok(!body.meta.model);
+      assert.equal(body.meta.isArray, true);
+      assert.equal(body.meta.count, 10);
+      assert.ok(body.data);
+      assert.equal(body.data.length, 10);
       done();
     });
 
   });
 
-  it("OPTIONS /api/v1/people 200 -- get options for People API", function (done) {
+  it("OPTIONS /api/v1/people 200 -- should respond with meta data", function (done) {
 
     request.post({
       url: util.format('%s/api/v1/people', testUrl),
@@ -87,13 +114,20 @@ describe("Response transformation", function (done) {
       if (typeof(body) == "string") {
         body = JSON.parse(body);
       }
-      assert.equal(body.length, 6);
+      assert.ok(body.meta);
+      assert.equal(body.meta.status, 200);
+      assert.equal(body.meta.operation, 'options');
+      assert.equal(body.meta.model, 'Person');
+      assert.equal(body.meta.isArray, true);
+      assert.equal(body.meta.count, 9);
+      assert.ok(body.data);
+      assert.equal(body.data.length, 9);
       done();
     });
 
   });
 
-  it("POST /api/v1/people 201 -- create a Person", function (done){
+  it("POST /api/v1/people 201 -- should respond with meta data", function (done){
     request.post({
       url: util.format('%s/api/v1/people', testUrl),
       json: {
@@ -104,10 +138,17 @@ describe("Response transformation", function (done) {
     }, function (err, res, body) {
       assert.ok(!err);
       assert.equal(res.statusCode, 201);
-      assert.ok(body._id);
-      assert.equal(body.firstName, 'John');
-      assert.equal(body.lastName, 'Johnson');
-      assert.equal(body.email, "john.johnson@i.ua");
+      assert.ok(body.meta);
+      assert.equal(body.meta.status, 201);
+      assert.equal(body.meta.operation, 'create');
+      assert.equal(body.meta.model, 'Person');
+      assert.ok(!body.meta.isArray);
+      assert.ok(!body.meta.count);
+      assert.ok(body.data);
+      assert.ok(body.data._id);
+      assert.equal(body.data.firstName, 'John');
+      assert.equal(body.data.lastName, 'Johnson');
+      assert.equal(body.data.email, "john.johnson@i.ua");
       models.Person.count(function(err, res) {
         assert.equal(res, 5);
         done();
@@ -115,7 +156,7 @@ describe("Response transformation", function (done) {
     });
   });
 
-  it("POST /api/v1/people 422 -- posting invalid data while creating a Person", function (done){
+  it("POST /api/v1/people 422 -- should respond with meta data", function (done){
     request.post({
       url: util.format('%s/api/v1/people', testUrl),
       json: {
@@ -124,13 +165,18 @@ describe("Response transformation", function (done) {
       }
     }, function (err, res, body) {
       assert.ok(!err);
-      assert.equal(res.statusCode, 422);
-      assert.equal(body.message, "Person validation failed");
+      assert.equal(res.statusCode, 200);
+      assert.ok(body.meta);
+      assert.equal(body.meta.status, 422);
+      assert.equal(body.meta.operation, 'create');
+      assert.equal(body.meta.model, 'Person');
+      assert.ok(body.errors);
+      assert.equal(body.meta.message, "Person validation failed");
       done();
     });
   });
 
-  it("GET /api/v1/people 200 -- searching for a person by mail (no results)", function (done){
+  it("GET /api/v1/people 200 -- should respond with meta data", function (done){
     request.get({
       url: util.format('%s/api/v1/people?email=john.johnson@i.ua', testUrl)
     }, function (err, res, body) {
@@ -139,12 +185,18 @@ describe("Response transformation", function (done) {
       if (typeof(body) == "string") {
         body = JSON.parse(body);
       }
-      assert.equal(body.length, 0);
+      assert.ok(body.meta);
+      assert.equal(body.meta.status, 200);
+      assert.equal(body.meta.operation, 'search');
+      assert.ok(body.meta.isArray);
+      assert.equal(body.meta.model, 'Person');
+      assert.equal(body.meta.count, 0);
+      assert.equal(body.data.length, 0);
       done();
     });
   });
 
-  it("GET /api/v1/people 200 -- searching for a person by mail (one result)", function (done){
+  it("GET /api/v1/people 200 -- should respond with meta data", function (done){
     request.get({
       url: util.format('%s/api/v1/people?email=a.s.pushkin@authors.ru', testUrl)
     }, function (err, res, body) {
@@ -153,14 +205,22 @@ describe("Response transformation", function (done) {
       if (typeof(body) == "string") {
         body = JSON.parse(body);
       }
-      assert.equal(body.length, 1);
-      assert.equal(body[0].firstName, "Alexander");
-      assert.equal(body[0].lastName, "Pushkin");
+
+      assert.ok(body.meta);
+      assert.equal(body.meta.status, 200);
+      assert.equal(body.meta.operation, 'search');
+      assert.ok(body.meta.isArray);
+      assert.equal(body.meta.model, 'Person');
+      assert.equal(body.meta.count, 1);
+      assert.equal(body.data.length, 1);
+
+      assert.equal(body.data[0].firstName, "Alexander");
+      assert.equal(body.data[0].lastName, "Pushkin");
       done();
     });
   });
 
-  it("GET /api/v1/people 200 -- searching for people (many results)", function (done){
+  it("GET /api/v1/people 200 -- should respond with meta data", function (done){
     request.get({
       url: util.format('%s/api/v1/people', testUrl)
     }, function (err, res, body) {
@@ -169,12 +229,17 @@ describe("Response transformation", function (done) {
       if (typeof(body) == "string") {
         body = JSON.parse(body);
       }
-      assert.equal(body.length, 4);
+      assert.equal(body.meta.status, 200);
+      assert.equal(body.meta.operation, 'search');
+      assert.ok(body.meta.isArray);
+      assert.equal(body.meta.model, 'Person');
+      assert.equal(body.meta.count, 4);
+      assert.equal(body.data.length, 4);
       done();
     });
   });
 
-  it("POST /api/v1/people/search 405 -- try to search via POST-method", function (done){
+  it("POST /api/v1/people/search 405 -- should respond with meta data", function (done){
     request.post({
       url: util.format('%s/api/v1/people/search', testUrl),
       json: {
@@ -182,28 +247,18 @@ describe("Response transformation", function (done) {
       }
     }, function (err, res, body) {
       assert.ok(!err);
-      assert.equal(res.statusCode, 405);
-      assert.equal(body.error, true);
-      assert.equal(body.message, "Not Supported");
-      done();
-    });
-  });
-
-  it("GET /api/v1/people 200 -- get all people", function(done) {
-    request.get({
-      url: util.format('%s/api/v1/people', testUrl)
-    }, function (err, res, body) {
-      assert.ok(!err);
       assert.equal(res.statusCode, 200);
-      if (typeof(body) == "string") {
-        body = JSON.parse(body);
-      }
-      assert.equal(body.length, 4);
+      assert.ok(body.meta);
+      assert.equal(body.meta.status, 405);
+      assert.ok(!body.meta.operation);
+      assert.equal(body.meta.model, 'Person');
+      assert.ok(body.errors);
+      assert.equal(body.meta.message, "Not Supported");
       done();
     });
   });
 
-  it("GET /api/v1/people/:id 200 -- get a specific Person", function(done) {
+  it("GET /api/v1/people/:id 200 -- should respond with meta data", function(done) {
     models.Person.findOne({}, function (err, p) {
       assert.ok(!err);
       assert.ok(p);
@@ -216,15 +271,20 @@ describe("Response transformation", function (done) {
         if (typeof(body) == "string") {
           body = JSON.parse(body);
         }
-        assert.equal(body.firstName, p.firstName);
-        assert.equal(body.lastName, p.lastName);
-        assert.equal(body.email, p.email.toLowerCase());
+        assert.ok(body.meta);
+        assert.equal(body.meta.status, 200);
+        assert.equal(body.meta.operation, 'details');
+        assert.equal(body.meta.model, 'Person');
+        assert.ok(!body.meta.isArray);
+        assert.equal(body.data.firstName, p.firstName);
+        assert.equal(body.data.lastName, p.lastName);
+        assert.equal(body.data.email, p.email.toLowerCase());
         done();
       });
     });
   });
 
-  it("POST /api/v1/people/:id 200 -- update a specific Person", function(done) {
+  it("POST /api/v1/people/:id 200 -- should responde with meta data", function(done) {
     models.Person.findOne({}, function (err, p) {
       assert.ok(!err);
       assert.ok(p._id);
@@ -239,9 +299,14 @@ describe("Response transformation", function (done) {
         if (typeof(body) == "string") {
           body = JSON.parse(body);
         }
-        assert.equal(body.firstName, p.firstName);
-        assert.equal(body.lastName, p.lastName);
-        assert.equal(body.email, "new.mail@server.com");
+        assert.ok(body.meta);
+        assert.equal(body.meta.status, 200);
+        assert.equal(body.meta.model, 'Person');
+        assert.equal(body.meta.operation, 'update');
+        assert.ok(!body.meta.isArray);
+        assert.equal(body.data.firstName, p.firstName);
+        assert.equal(body.data.lastName, p.lastName);
+        assert.equal(body.data.email, "new.mail@server.com");
         models.Person.findById(p._id, function (err, p1) {
           assert.ok(!err);
           assert.equal(p1.firstName, p.firstName);
@@ -253,7 +318,7 @@ describe("Response transformation", function (done) {
     });
   });
 
-  it("POST /api/v1/people/:id 422 -- trying to update the specific Person with invalid data", function(done) {
+  it("POST /api/v1/people/:id 422 -- should respond with meta data", function(done) {
     models.Person.findOne({}, function (err, p) {
       assert.ok(!err);
       assert.ok(p._id);
@@ -265,12 +330,16 @@ describe("Response transformation", function (done) {
         }
       }, function (err, res, body) {
         assert.ok(!err);
-        assert.equal(res.statusCode, 422);
+        assert.equal(res.statusCode, 200);
         if (typeof(body) == "string") {
           body = JSON.parse(body);
         }
-        assert.equal(body.error, true);
-        assert.equal(body.message, "Validation failed");
+        assert.ok(body.meta);
+        assert.equal(body.meta.status, 422);
+        assert.equal(body.meta.model, 'Person');
+        assert.equal(body.meta.operation, 'update');
+        assert.ok(body.errors);
+        assert.equal(body.meta.message, "Validation failed");
         assert.equal(body.errors.email.message, 'Path `email` is required.');
         assert.equal(body.errors.lastName.message, 'Path `lastName` is required.');
         done();
@@ -278,7 +347,7 @@ describe("Response transformation", function (done) {
     });
   });
 
-  it("DELETE /api/v1/people/:id 200", function(done) {
+  it("DELETE /api/v1/people/:id 200 -- should respond with meta data", function(done) {
     models.Person.findOne({}, function (err, p) {
       assert.ok(!err);
       assert.ok(p._id);
@@ -293,7 +362,12 @@ describe("Response transformation", function (done) {
         if (typeof(body) == "string") {
           body = JSON.parse(body);
         }
-        assert.deepEqual(body, {});
+        assert.ok(body.meta);
+        assert.equal(body.meta.status, 200);
+        assert.equal(body.meta.model, 'Person');
+        assert.equal(body.meta.operation, 'delete');
+        assert.ok(!body.meta.isArray);
+        assert.deepEqual(body.data, {});
         models.Person.count(function(err, res) {
           assert.equal(res, 3);
           done();
@@ -302,23 +376,27 @@ describe("Response transformation", function (done) {
     });
   });
 
-  it("GET /api/v1/people/:id 404 -- try to get Person by unexisting id", function(done) {
+  it("GET /api/v1/people/:id 404 -- should responde with meta data", function(done) {
     var id = mongoose.Types.ObjectId();
     request.get({
       url: util.format('%s/api/v1/people/%s', testUrl, id)
     }, function (err, res, body) {
       assert.ok(!err);
-      assert.equal(res.statusCode, 404);
+      assert.equal(res.statusCode, 200);
       if (typeof(body) == "string") {
         body = JSON.parse(body);
       }
-      assert.equal(body.error, true);
-      assert.equal(body.message, "The Person was not found by "+id);
+      assert.ok(body.meta);
+      assert.equal(body.meta.status, 404);
+      assert.equal(body.meta.model, 'Person');
+      assert.equal(body.meta.operation, 'details');
+      assert.ok(body.errors);
+      assert.equal(body.meta.message, "The Person was not found by "+id);
       done();
     });
   });
 
-  it("POST /api/v1/people/:id 404 -- try to update Person by unexisting id", function(done) {
+  it("POST /api/v1/people/:id 404 -- should respond with meta data", function(done) {
     var id = mongoose.Types.ObjectId();
     request.post({
       url: util.format('%s/api/v1/people/%s', testUrl, id),
@@ -327,17 +405,21 @@ describe("Response transformation", function (done) {
       }
     }, function (err, res, body) {
       assert.ok(!err);
-      assert.equal(res.statusCode, 404);
+      assert.equal(res.statusCode, 200);
       if (typeof(body) == "string") {
         body = JSON.parse(body);
       }
-      assert.equal(body.error, true);
-      assert.equal(body.message, "The Person was not found by "+id);
+      assert.ok(body.meta);
+      assert.equal(body.meta.status, 404);
+      assert.equal(body.meta.model, 'Person');
+      assert.equal(body.meta.operation, 'update');
+      assert.ok(body.errors);
+      assert.equal(body.meta.message, "The Person was not found by "+id);
       done();
     });
   });
 
-  it("POST /api/v1/people/ 406 -- failing to update a specific Person by using interface of create-method", function(done) {
+  it("POST /api/v1/people/ 406 -- should respond with meta data", function(done) {
     models.Person.findOne({}, function (err, p) {
       assert.ok(!err);
       assert.ok(p._id);
@@ -346,12 +428,16 @@ describe("Response transformation", function (done) {
         json: p.toJSON()
       }, function (err, res, body) {
         assert.ok(!err);
-        assert.equal(res.statusCode, 406);
+        assert.equal(res.statusCode, 200);
         if (typeof(body) == "string") {
           body = JSON.parse(body);
         }
-        assert.equal(body.error, true);
-        assert.equal(body.message, "This method doesn't allow to update a(n) Person");
+        assert.ok(body.meta);
+        assert.equal(body.meta.status, 406);
+        assert.equal(body.meta.model, 'Person');
+        assert.equal(body.meta.operation, 'create');
+        assert.ok(body.errors);
+        assert.equal(body.meta.message, "This method doesn't allow to update a(n) Person");
         done();
       });
     });
@@ -366,29 +452,72 @@ describe("Response transformation", function (done) {
       }
     }, function (err, res, body) {
       assert.ok(!err);
-      assert.equal(res.statusCode, 404);
+      assert.equal(res.statusCode, 200);
       if (typeof(body) == "string") {
         body = JSON.parse(body);
       }
-      assert.equal(body.error, true);
-      assert.equal(body.message, "The Person was not found by "+id);
+      assert.ok(body.meta);
+      assert.equal(body.meta.status, 404);
+      assert.equal(body.meta.model, 'Person');
+      assert.equal(body.meta.operation, 'delete');
+      assert.ok(body.errors);
+      assert.equal(body.meta.message, "The Person was not found by "+id);
       done();
     });
   });
 
-  it("POST /api/v1/people/count 405 -- trying to call not implemented method", function (done){
-    request.post({
-      url: util.format('%s/api/v1/people/count', testUrl),
-    }, function (err, res, body) {
-
+  it("POST /api/v1/people/:id/reverse 200 -- should respond with meta data", function(done) {
+    models.Person.findOne({}, function (err, p) {
       assert.ok(!err);
-      assert.equal(res.statusCode, 405);
+      assert.ok(p._id)
+      request.post({
+        url: util.format('%s/api/v1/people/%s/reverse', testUrl, p._id)
+      }, function (err, res, body) {
+        assert.ok(!err);
+        assert.equal(res.statusCode, 200);
+        if (typeof(body) == "string") {
+          body = JSON.parse(body);
+        }
+        assert.ok(body.meta);
+        assert.equal(body.meta.status, 200);
+        assert.equal(body.meta.model, 'Person');
+        assert.equal(body.meta.operation, 'instanceMethod');
+        assert.equal(body.meta.instanceMethod, 'Reverse');
+        assert.equal(body.data.status, "Ok");
+        models.Person.findById(p._id, function (err, p1) {
+          assert.ok(!err);
+          assert.equal(p1.firstName, p.firstName.split("").reverse().join(""));
+          assert.equal(p1.lastName, p.lastName.split("").reverse().join(""));
+          done();
+        });
+      });
+    });
+  });
+
+  it("POST /api/v1/people/email-list 200 -- should respond with meta data", function(done) {
+    request.post({
+      url: util.format('%s/api/v1/people/email-list', testUrl)
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
       if (typeof(body) == "string") {
         body = JSON.parse(body);
       }
-      assert.equal(body.error, true);
-      assert.equal(body.message, "Not Supported");
+      assert.equal(body.meta.status, 200);
+      assert.equal(body.meta.model, 'Person');
+      assert.equal(body.meta.operation, 'staticMethod');
+      assert.equal(body.meta.staticMethod, 'emailList');
+      assert.equal(body.meta.isArray, true);
+      assert.equal(body.meta.count, 4);
+      assert.equal(body.data.length, 4);
+      assert.deepEqual(body.data, [
+        'a.s.pushkin@authors.ru',
+        'jack.london@writers.uk',
+        'm-twen@legends.us',
+        't.shevchenko@heroes.ua'
+      ]);
       done();
     });
   });
+
 });
