@@ -124,6 +124,7 @@ Detailed example:
  - [Filtering on insertion](https://github.com/DScheglov/merest/tree/master/examples/filtering-on-insertion)
  - [Exposition of Instance method](https://github.com/DScheglov/merest/tree/master/examples/instance-method)
  - [Exposition of static method](https://github.com/DScheglov/merest/tree/master/examples/static-method)
+ - [Response customization](https://github.com/DScheglov/merest/tree/master/examples/transform-response)
 
 
 ---------------------------------------------------
@@ -194,6 +195,44 @@ Content-Type: application/json; charset=utf-8
 }
 ```
 The fields `errors` and `stack` are optional.
+
+<a name="customize_responses"></a>
+#### Response customization
+`Merest` allows to customize all responses. In order to do that you should define
+function that transforms prepared response and specify this function in api configuration
+
+**Example**:
+```javascript
+// api.js
+function prepareResponse(req, res) {
+  var body = {
+    status: this.status,
+    data: this.body
+  };
+  this.status = 200;
+  this.body = body;
+}
+
+...
+var api = new merest.ModelAPIExpress({
+  transformResponse: prepareResponse
+});
+
+```
+
+You could access the following fields inside a transforming function:
+ - `this.status` -- the HTTP Status
+ - `this.body` -- the response body
+ - `this.apiMethod` -- the API end-point name (`create`, `search`, `details` etc.)
+ - `this.apiInstanceMethod` -- the name of exposed instance method
+ - `this.apiStaticMethod` -- the name of exposed static method
+ - `this.api` -- the API-object (the child of `express`);
+ - `this.modelAPI` -- the router dispatches end-points related the model
+ - `this.model` -- the model name
+
+ You should reassign `this.status` and `this.body` to override default HTTP-response.
+ The function returns nothing.
+
 
 <a name="ep_options"></a>
 
