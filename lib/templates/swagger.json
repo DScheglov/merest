@@ -1,0 +1,33 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "{{ title }}",
+    "version": "{{ version }}"
+  },
+  {% if host %}"host": "{{ host }}",{% endif %}
+  {% if basePath %}"basePath": "{{ basePath }}",{% endif %}
+  "paths": {
+    {% for p in paths %}
+      "{{ p.path }}" : {
+        {% for o in p.ops %}
+        "{{o.method}}": {
+          "description": "{{ o.title }}",
+          "responses": {
+            {% for r in o.responses %}
+              "{{r.code}}": {
+                "description": "{{ r.title }}",
+                "schema": {% autoescape false %}{{ r.schema }}{% endautoescape %}
+              }{%if !loop.last %},{% endif %}
+            {% endfor %}
+            {% if !o.responses %}
+              "200": {
+                "description": "Ok"
+              }
+            {% endif %}
+          }
+        }{%if !loop.last %},{% endif %}
+        {% endfor %}
+      }{%if !loop.last %},{% endif %}
+    {% endfor %}
+  }
+}
