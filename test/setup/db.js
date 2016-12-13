@@ -1,6 +1,10 @@
-var async = require('async')
-var mongoose = require('mongoose')
-var util = require('util')
+'use strict';
+
+var async = require('async');
+var mongoose = require('mongoose');
+var util = require('util');
+
+mongoose.Promise = global.Promise;
 
 module.exports = {
     init: initialize,

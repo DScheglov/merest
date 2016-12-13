@@ -11,3 +11,5 @@ require('./suites/error-500');
 require('./suites/options-filter');
 require('./suites/exposition');
 require('./suites/transform-response');
+require('./suites/extended-search');
+require('./suites/cast-error-400');
