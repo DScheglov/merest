@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Installation | Merest</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+<h1 class="page-title">Installation</h1>
+<section>
+  <article>
+    <a name='prerequisites'></a>
+    <h3>Prerequisites</h3>
+    <p>You should install:
+      <ul>
+        <li>NodeJS v.5+</li>
+        <li>MongoDB v.3.2.11+</li>
+      </ul>
+      The module was not tested in another environment.
+    </p>
+
+  <a name="npm-install"></a>
+  <h3>Installing with <strong>npm</strong>:</h3>
+<pre class="prettyprint source lang-shell"><code>npm install ---save merest
+</code></pre>
+  <p><strong>merest</strong> doesn't install Mongoose or Express in production environment.
+    It is crucial to embed API into your project correctly. You should to install
+    these components by yourself.
+  </p>
+  <p>Recommended components:</p>
+  <pre class="prettyprint source lang-shell"><code>npm install --save mongoose express body-parser method-override
+</code></pre>
+
+  <a name="development"></a>
+  <h3>Development</h3>
+<pre class="prettyprint source lang-shell"><code>git clone https://github.com/DScheglov/merest
+cd merest
+npm install
+npm test
+</code></pre>
+    <br class="clear">
+    <hr>
+    <a href='index.html'>< Previous (merest)</a> | <a href='cook-book.html'>Next (Cook-book) ></a>
+  </article>
+</section>
+</div>
+
+<nav><h2>
+  <a href="index.html">merest</a>
+</h2>
+
+<h3><a href="installation.html">Installation</a></h3>
+<ul>
+  <li><a href="installation.html#prerequisites">Prerequisites</a></li>
+  <li><a href="installation.html#npm-install">npm installation</a></li>
+  <li><a href="installation.html#development">Development</a></li>
+</ul>
+
+<h3><a href="cook-book.html">Cook-book</a></h3>
+
+<h3><a href="configuration.html">API Configuration</a></h3>
+<ul>
+  <li><a href="configuration.html#levels">Configuration levels</a></li>
+  <li><a href="configuration.html#app">API Application</a></li>
+  <li><a href="configuration.html#router">Router</a></li>
+  <li><a href="configuration.html#end-point">End-point</a></li>
+  <li><a href="configuration.html#methods">Model methods</a></li>
+</ul>
+
+<h3><a href="end-points.html">API Requests and Responses</a></h3>
+<ul>
+  <li><a href="end-points.html">Common reponses</a></li>
+  <li><a href="end-points.html#ep_options">Options</a></li>
+  <li><a href="end-points.html#ep_search">Search</a></li>
+  <li><a href="end-points.html#ep_create">Create</a></li>
+  <li><a href="end-points.html#ep_details">Details</a></li>
+  <li><a href="end-points.html#ep_update">Update</a></li>
+  <li><a href="end-points.html#ep_delete">Delete</a></li>
+  <li><a href="end-points.html#transform-response">Custom response</a></li>
+</ul>
+
+<h3><a href="swagger.html">Swagger support</a></h3>
+<ul>
+  <li><a href="swagger.html#install">Installation</a></li>
+  <li><a href="swagger.html#api-conf">Configure API</a></li>
+  <li><a href="swagger.html#document">Creating <code>swagger.json</code></a></li>
+  <li><a href="swagger.html#api-docs">Exposing the api-docs</a></li>
+  <li><a href="swagger.html#swagger-ui">Embedded swagger-ui</a></li>
+</ul>
+
+<h3>Specifications</h3>
+<ul>
+  <li><a href="ModelAPIError.html">ModelAPIError</a></li>
+  <li><a href="ModelAPIExpress.html">ModelAPIExpress</a></li>
+  <li><a href="ModelAPIRouter.html">ModelAPIRouter</a></li>
+</ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated with <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+{% extends "includes/base-layout.twig" %}
+
+{% block title %}Requests and Responses | Merest{% endblock %}
+{% block content %}
+<h1 class="page-title">Requests and Responses</h1>
+
+<section>
+    <article>
+
+<p><a name="requests_responses"></a></p>
+<h3>End-points:</h3>
+
+<h4>The paths of REST end-points:</h4><p>The end-point path consists of three parts:
+/[<code>api-mount-path</code>/]<code>model-exposition-path</code>/[<code>additional-path</code>/]</p>
+<ul>
+<li><strong>api-mount-path</strong> -- the path that assigned in the <code>use</code> method called to
+bind the ModelAPIExpress to your main application. This path could be omitted
+in two cases: 1) the path omitted in the <code>use</code> method, or 2) the ModelAPIExpress
+is main application (it's also possible)</li>
+<li><strong>model-exposition-path</strong> - by default it is the collection name of exposed
+Model. This path could be overrided by assigning <code>path</code> api-option on the
+Model-routes level (see API-configuration)</li>
+<li><strong>additional-path</strong> - by default it is omitted. It could be assigned by
+specifying <code>path</code> api-option on the end-point level (see API-configuration)</li>
+</ul>
+<p><strong>merest</strong> grants that assigned by default paths for different end-points are not
+intercepted, but it doesn't control the interception for custom assigned paths.</p>
+<p><a name="common_responses"></a></p>
+
+<h3>Common responses</h3><h5>404 - Document was not found (or doesn't exist)</h5><p><strong>merest</strong> returns this response if it couldn't find the Document (including
+just created) by id in the url and/or doesn't match the assigned <code>filter</code>
+api-option</p>
+<pre class="prettyprint source lang-shell"><code>Status: 404
+Content-Type: application/json; charset=utf-8
+
+{"error": true, "code": 404, "message": "..."}</code></pre><h5>405 - End-point is not supported:</h5><p><strong>merest</strong> returns this response if requested path doesn't associated with any
+handler.</p>
+<p><strong>Note</strong>: instead of common practice for HTTP <strong>merest</strong> return 405 HTTP Response
+code, but not 404 that means: Document was not found (or doesn't exist).</p>
+<pre class="prettyprint source lang-shell"><code>Status: 405
+Content-Type: application/json; charset=utf-8
+
+{"error": true, "code": 405, "message": "Not Supported"}</code></pre><h5>422 - Validation error</h5><pre class="prettyprint source lang-shell"><code>Status: 422
+Content-Type: application/json; charset=utf-8
+
+{
+  "error": true,
+  "code": 422,
+  "message": "..."
+  [,"errors": {
+    ...
+  }]
+  [,"stack": [
+    ...
+  ]]
+}</code></pre><p>The fields <code>errors</code> and <code>stack</code> are optional.</p>
+
+
+<p><a name="ep_options"></a></p>
+<hr>
+<h3>End-point <code>options</code>:</h3><p>Returns list of available end-points with short description.</p>
+<p>Request:</p>
+<pre class="prettyprint source lang-shell"><code>OPTIONS /end-point-path/ HTTP/1.1
+HOST: hostname:port</code></pre><p>If you client doesn't support OPTIONS HTTP-method directly, use this message:</p>
+<pre class="prettyprint source lang-shell"><code>POST /end-point-path/ HTTP/1.1
+HOST: hostname:port
+X-HTTP-Method-Override: OPTIONS</code></pre><p>Responses:</p>
+<p>Success:</p>
+<pre class="prettyprint source lang-shell"><code>Status: 200
+Content-Type: application/json; charset=utf-8
+
+[
+  ["method", "path", "descriptions"],
+  ["method", "path", "descriptions"],
+  ...
+  ["method", "path", "descriptions"]
+]</code></pre><p>Other responses:</p>
+<ul>
+<li>405 - End-point is not supported</li>
+</ul>
+<p><a name="ep_search"></a></p>
+<hr>
+<h3>End-point <code>search</code>:</h3><p>Returns the list of Documents that satisfy query passed to call.</p>
+<p>Request for end-point mounted on <code>GET</code>:</p>
+<pre class="prettyprint source lang-shell"><code>GET /end-point-path/[?field1=value1&field2=value2&_sort=fieldName&_limit=number&_skip=number] HTTP/1.1
+HOST: hostname:port</code></pre><p>Query String could contain pares field=value separated by the <code>&amp;</code>
+and three additional parameters:</p>
+<ul>
+<li>_sort=fieldName</li>
+<li>_limit=maximum number of documents in Response</li>
+<li>_skip=number of document that should be skipped in Response</li>
+</ul>
+<p>These parameters (all of them or any of them) will be ignored if
+appropriate API-configuration option will be assigned to <code>false</code></p>
+<p>To use all <strong>MongoDB</strong> query opportunities you could mount the <code>create</code> end-point
+on the POST HTTP-method and specify <code>additional-path</code>.</p>
+<p>In security reasons I don't recommend to do so. The better way is to extend Model
+with static methods that accepts only necessary parameters and builds safe query.
+However <strong>merest</strong> allows you to mount <code>search</code> end-point on POST method and
+form query on the client-side.</p>
+<p>Request for end-point mounted on <code>POST</code>:</p>
+<pre class="prettyprint source lang-shell"><code>POST /end-point-path/[?_sort=fieldName&_limit=number&_skip=number] HTTP/1.1
+HOST: hostname:port
+Content-Type: application/json
+
+&lt;Mongoose Query-Object></code></pre><p>Success:</p>
+<pre class="prettyprint source lang-shell"><code>Status: 200
+Content-Type: application/json; charset=utf-8
+
+[
+  { ... },
+  { ... }
+  ...
+  { ... }
+]</code></pre><p>If no one Document found, the <strong>merest</strong> returns empty Array</p>
+<p>Other responses:</p>
+<ul>
+<li>405 - End-point is not supported</li>
+</ul>
+
+<p><a name="ep_create"></a></p>
+<hr>
+<h3>End-point <code>create</code>:</h3><p>Creates new Document, finds it and returns to the client.</p>
+<p>Request:</p>
+<pre class="prettyprint source lang-shell"><code>POST /end-point-path/ HTTP/1.1
+HOST: hostname:port
+Content-Type: application/json
+
+&lt;Mongoose Model Object></code></pre><p>Responses:</p>
+<p>Success:</p>
+<pre class="prettyprint source lang-shell"><code>Status: 200
+Content-Type: application/json; charset=utf-8
+
+{ ... }</code></pre><p>406 - Method doesn't allow to update object</p>
+<pre class="prettyprint source lang-shell"><code>Status: 406
+Content-Type: application/json; charset=utf-8
+
+{
+  "error": true,
+  "code": 406,
+  "message": "This method doesn't allow to update a(n) ${Model.name}"
+}</code></pre><p>Other responses:</p>
+<ul>
+<li>404 - Document was not found (or doesn't exist)</li>
+<li>405 - End-point is not supported</li>
+<li>422 - Validation error</li>
+</ul>
+<p>The Response with status code 404 could be returned if created object doesn't
+match <code>filter</code> api-option specified on the exposition.</p>
+
+<p><a name="ep_details"></a></p>
+<hr>
+<h3>End-point <code>details</code>:</h3><p>Returns Document of the exposed Model by its id specified in the URL.</p>
+<p>Request:</p>
+<pre class="prettyprint source lang-shell"><code>GET /end-point-path/:id HTTP/1.1
+HOST: hostname:port</code></pre><p>Responses:</p>
+<p>Success:</p>
+<pre class="prettyprint source lang-shell"><code>Status: 200
+Content-Type: application/json; charset=utf-8
+
+{ ... }</code></pre><p>Other responses:</p>
+<ul>
+<li>404 - Document was not found (or doesn't exist)</li>
+<li>405 - End-point is not supported</li>
+</ul>
+
+<a name="ep_update"></a>
+<hr>
+<h3>End-point <code>update</code>:</h3><p>Updates the existing Document, returns it to the client.</p>
+<p>Request:</p>
+<pre class="prettyprint source lang-shell"><code>POST /end-point-path/:id HTTP/1.1
+HOST: hostname:port
+Content-Type: application/json
+
+&lt;Mongoose $set-object></code></pre><p>Responses:</p>
+<p>Success:</p>
+<pre class="prettyprint source lang-shell"><code>Status: 200
+Content-Type: application/json; charset=utf-8
+
+{ ... }</code></pre><p>Other responses:</p>
+<ul>
+<li>404 - Document was not found (or doesn't exist)</li>
+<li>405 - End-point is not supported</li>
+<li>422 - Validation error</li>
+</ul>
+<p><a name="ep_delete"></a></p>
+<hr>
+<h3>End-point <code>delete</code>:</h3><p>Finds Document by id specified in the URL, deletes it and returns empty
+JSON-object to the client.</p>
+<p>Request:</p>
+<pre class="prettyprint source lang-shell"><code>DELETE /end-point-path/:id HTTP/1.1
+HOST: hostname:port</code></pre><p>If you client doesn't support DELETE HTTP-method directly, use this message:</p>
+<pre class="prettyprint source lang-shell"><code>POST /end-point-path/ HTTP/1.1
+HOST: hostname:port
+X-HTTP-Method-Override: DELETE</code></pre><p>Responses:</p>
+<p>Success:</p>
+<pre class="prettyprint source lang-shell"><code>Status: 200
+Content-Type: application/json; charset=utf-8
+
+{}</code></pre><p>Other responses:</p>
+<ul>
+<li>404 - Document was not found (or doesn't exist)</li>
+<li>405 - End-point is not supported</li>
+</ul>
+
+<a name='transform-response'></a>
+<h3>Response customization</h3><p><code>Merest</code> allows to customize all responses. In order to do that you should define
+function that transforms prepared response and specify this function in api configuration</p>
+<p><strong>Example</strong>:</p>
+<pre class="prettyprint source lang-javascript"><code>// api.js
+
+var api = new merest.ModelAPIExpress({
+transformResponse: prepareResponse
+});
+
+...
+
+function prepareResponse(req, res) {
+var body = {
+status: this.status,
+data: this.body
+};
+this.status = 200;
+this.body = body;
+}</code></pre><p>You could access the following fields inside a transforming function:</p>
+<ul>
+<li><code>this.status</code> -- the HTTP Status</li>
+<li><code>this.body</code> -- the response body</li>
+<li><code>this.apiMethod</code> -- the API end-point name (<code>create</code>, <code>search</code>, <code>details</code> etc.)</li>
+<li><code>this.apiInstanceMethod</code> -- the name of exposed instance method</li>
+<li><code>this.apiStaticMethod</code> -- the name of exposed static method</li>
+<li><code>this.api</code> -- the API-object (the child of <code>express</code>);</li>
+<li><code>this.modelAPI</code> -- the router dispatches end-points related the model</li>
+<li><code>this.model</code> -- the model name</li>
+</ul>
+<p>You should reassign <code>this.status</code> and <code>this.body</code> to override default HTTP-response.
+The function returns nothing.</p>
+<p>Calling API:</p>
+<pre class="prettyprint source lang-shell"><code>curl -X OPTIONS http://localhost:1337/api/v1/</code></pre><p>Output:</p>
+<pre class="prettyprint source lang-shell"><code>{
+  "status": 200,
+  "data": [
+    ["options", "/api/v1/", "List all end-points of current application"],
+    ["options", "/api/v1/vectors/", "List API-options for vectors"],
+    ["get", "/api/v1/vectors/", "List/Search all vectors"],
+    ["post", "/api/v1/vectors/", "Create a new Vector"],
+    ["get", "/api/v1/vectors/:id", "Find a Vector by Id"],
+    ["post", "/api/v1/vectors/:id", "Find a Vector by Id and update it (particulary)"],
+    ["delete", "/api/v1/vectors/:id", "Find a Vector by Id and delete it."]
+  ]
+}</code></pre></li>
+</ul>
+<p>Also you can run this example:</p>
+<pre class="prettyprint source lang-shell"><code>git clone https://github.com/DScheglov/merest.git
+cd merest
+npm install
+node examples/transform-response/server.js</code></pre>
+
+<br class="clear">
+<hr>
+<a href='installation.html'>Next (Installation) ></a>
+</article>
+</section>
+{% endblock %}

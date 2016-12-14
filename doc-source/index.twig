@@ -1,0 +1,88 @@
+{% extends "includes/base-layout.twig" %}
+
+{% block title %}Merest{% endblock %}
+{% block content %}
+<h1 class="page-title">merest</h1>
+
+<section>
+    <article>
+      <h2><u>M</u>ongoose <u>E</u>xpress <u>REST</u>-full API</h2>
+      <p>
+        <strong>merest</strong> provides easy way to expose Mongoose models as REST-full api.
+        It creates pointed bellow end-points:
+      </p>
+      For each api-application:
+      <ul>
+        <li><code>all api options</code>: <strong>OPTIONS</strong>..\</li>
+      </ul>
+      For each exposed model:
+      <ul>
+        <li><code>model api options</code>: <strong>OPTIONS ..\model-plural-name\</strong></li>
+        <li><code>search</code>: <strong>GET ..\model-plural-name\</strong></li>
+        <li><code>create</code>: <strong>POST ..\model-plural-name\</strong></li>
+        <li><code>details</code>: <strong>GET ..\model-plural-name\:id</strong></li>
+        <li><code>update</code>: <strong>POST ..\model-plural-name\:id</strong></li>
+        <li><code>delete</code>: <strong>DELETE ..\model-plural-name\:id</strong></li>
+      </ul>
+      <p>Gennerally <strong>merest</strong> allows to:</p>
+      <ul>
+        <li>create rest api for many models</li>
+        <li>create many rest interfaces for one model</li>
+        <li>restrict the set of documents that are accessible via API</li>
+        <li>configure of each mentioned above end-points</li>
+        <li>expose static and instance methods of the Model</li>
+        <li>create and expose swagger documentation of your rest api</li>
+        <li>serve the swagger-ui</li>
+      </ul>
+
+      <h3>Getting started with <strong>merest</strong></h3>
+<pre class="prettyprint source lang-javascript"><code>'use strict';
+
+const merest = require('merest');
+const express = require('express');
+const bodyParser = require('body-parser');
+// to support HTTP OPTIONS and DELETE methods
+const methodOverride = require('method-override');
+const mongoose = require('mongoose');
+
+const ContactSchema = new mongoose.Schema({
+  name: {type: String, required: true},
+  email: String,
+  phone: String,
+  tags: [String]
+});
+
+const Contact = mongoose.model('Contact', ContactSchema);
+
+const api = new merest.ModelAPIExpress();
+api.expose(Contact);
+
+const app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(methodOverride());
+
+app.use('/api/v1', api); // exposing our API
+
+mongoose.connect('mongodb://localhost/merest-sample');
+app.listen(8000, function(){
+  console.log('Express server listening on port 8000');
+});</code></pre><p>Calling API:</p>
+<pre class="prettyprint source lang-shell"><code>curl -X OPTIONS http://localhost:1337/api/v1/</code></pre>
+      <p>Output:</p>
+<pre class="prettyprint source lang-shell"><code>[
+  ["options", "/api/v1/", "List all end-points of current application"],
+  ["options", "/api/v1/contacts/", "List API-options for contacts"],
+  ["get", "/api/v1/contacts/", "List/Search all contacts"],
+  ["post", "/api/v1/contacts/", "Create a new Contact"],
+  ["get", "/api/v1/contacts/:id", "Find a Contact by Id"],
+  ["post", "/api/v1/contacts/:id", "Find a Contact by Id and update it (particulary)"],
+  ["delete", "/api/v1/contacts/:id", "Find a Contact by Id and delete it."]
+]</code></pre>
+      <br class="clear">
+      <hr>
+      <a href='installation.html'>Next (Installation) ></a>
+    </article>
+</section>
+{% endblock %}

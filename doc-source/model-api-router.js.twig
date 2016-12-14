@@ -1,4 +1,17 @@
-var path = require('path').posix;
+{% extends "includes/base-layout.twig" %}
+
+{% block title %}Source: model-api-router.js | Merest{% endblock %}
+{% block content %}
+    <h1 class="page-title">Source: model-api-router.js</h1>
+
+
+
+
+
+
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var path = require('path').posix;
 var express = require('express');
 var Router = express.Router;
 var mongoose = require('mongoose');
@@ -133,7 +146,7 @@ ModelAPIRouter.prototype.__applyOptions = function(options) {
  */
 ModelAPIRouter.prototype.option = function(method, name) {
   var methodOptions = this.apiOptions[method];
-  if (methodOptions && methodOptions[name] != undefined) {
+  if (methodOptions &amp;&amp; methodOptions[name] != undefined) {
     return methodOptions[name];
   }
   return this.apiOptions[name];
@@ -152,7 +165,7 @@ ModelAPIRouter.prototype.attachTo = function(app) {
   this.application = app;
   this.application.__addModelAPIrouter(this);
   this.__init();
-  if (this.middlewares && this.middlewares.length) {
+  if (this.middlewares &amp;&amp; this.middlewares.length) {
     var args = [this.path];
     args = args.concat(this.middlewares);
     this.application.use.apply(this.application, args);
@@ -169,11 +182,11 @@ ModelAPIRouter.prototype.attachTo = function(app) {
  * @return {Array}            the list of avaliable urls
  */
 ModelAPIRouter.prototype.urls = function(rootPath) {
-  if (this.rootPath && this._urls) return this._urls;
+  if (this.rootPath &amp;&amp; this._urls) return this._urls;
   this._urls = this._urls || [];
   if (rootPath) {
     this.rootPath = rootPath;
-    for (var i=0; i<this._urls.length; i++) {
+    for (var i=0; i&lt;this._urls.length; i++) {
       this._urls[i][1] = path.join(rootPath, this._urls[i][1]);
     }
   }
@@ -243,3 +256,7 @@ ModelAPIRouter.prototype.__init = function() {
 }
 
 module.exports = exports = ModelAPIRouter;
+</code></pre>
+        </article>
+    </section>
+{% endblock %}

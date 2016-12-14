@@ -1,19 +1,36 @@
 ## <u>M</u>ongoose <u>E</u>xpress <u>REST</u>-full API
 
-##### [Cook book](#cook-book) | [Requests and responses](#requests_responses) | [API configuration](#api_config) | [Methods API](#methods_api) | [To Do](#to-do)
-
-**merest** provides easy way to expose Mongoose models as REST-full api. It creates pointed bellow end-points for each exposed model:
+**merest** provides easy way to expose Mongoose models as REST-full api.
+It creates pointed bellow end-points for each exposed model:
+ - `all api options`: **OPTIONS** [..\\ ](#ep_options)
+ - `model api options`: **OPTIONS** [..\\model-plural-name\\ ](#ep_options)
  - `search`: **GET** [..\\model-plural-name\\ ](#ep_search)
  - `create`: **POST** [..\\model-plural-name\\ ](#ep_create)
  - `details`: **GET** [..\\model-plural-name\\:id](#ep_details)
  - `update`: **POST** [..\\model-plural-name\\:id](#ep_update)
- - `delete`: **DELETE** [..\\model-plural-name\\:id](#ep_details)
+ - `delete`: **DELETE** [..\\model-plural-name\\:id](#ep_delete)
 
- Additionally **merest** implements `OPTIONS` HTTP-method to return list of created end-points:
- - `all api options`: **OPTIONS** [..\\ ](#ep_options)
- - `model api options`: **OPTIONS** [..\model-plural-name\\ ](#ep_options)
+Additionally `merest` allows:
+ - configure of each mentioned above end-points
+ - expose static and instance methods of the Model
+ - create and expose swagger documentation of your rest api
+ - service the swagger-ui
 
-To provide wide functionality of the Mongoose model **merest** allows you to expose static and instance methods of the model.
+### Contents
+ - [Installation](#installation)
+ - [Getting started](#example)
+ - [Cook book](#cook-book)
+ - [Requests and responses](#requests_responses)
+   - [api options](#ep_options)
+   - [search](#ep_search)
+   - [create](#ep_create)
+   - [details](#ep_details)
+   - [update](#ep_update)
+   - [delete](#ep_delete)
+ - [API configuration](#api_config)
+ - [Methods API](#methods_api)
+ - [Release notes](#release-notes)
+ - [To Do](#to-do)
 
 ### Installation
 ```shell
@@ -39,48 +56,29 @@ npm test
 ```
 
 ### Example
-models.js
-```javascript
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-
-var VectorSchema = new Schema({
-  x: Number,
-  y: Number,
-  label: String,
-  info : {
-    d: Date,
-    tags: [String]
-  }
-});
-
-var Vector = mongoose.model('Vector', VectorSchema);
-module.exports = exports = {
-  Vector: Vector
-};
-```
-
-api.js
-```javascript
-var merest = require('merest');
-var models = require('./models');
-
-var api = new merest.ModelAPIExpress();
-api.expose(models.Vector);
-
-module.exports = exports = api;
-```
 server.js
 ```javascript
-var mongoose = require('mongoose');
-var express = require('express');
-var bodyParser = require('body-parser');
-var methodOverride = require('method-override'); // to support HTTP OPTIONS
-var api = require('./api');
+'use strict';
 
-mongoose.connect('mongodb://localhost/merest-sample');
+const merest = require('merest');
+const express = require('express');
+const bodyParser = require('body-parser');
+const methodOverride = require('method-override'); // to support HTTP OPTIONS
+const mongoose = require('mongoose');
 
-var app = express();
+const ContactSchema = new mongoose.Schema({
+  name: {type: String, required: true},
+  email: String,
+  phone: String,
+  tags: [String]
+});
+
+const Contact = mongoose.model('Contact', ContactSchema);
+
+const api = new merest.ModelAPIExpress();
+api.expose(Contact);
+
+const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -88,8 +86,9 @@ app.use(methodOverride());
 
 app.use('/api/v1', api); // exposing our API
 
-app.listen(1337, function(){
-  console.log('Express server listening on port 1337');
+mongoose.connect('mongodb://localhost/merest-sample');
+app.listen(8000, function(){
+  console.log('Express server listening on port 8000');
 });
 ```
 Calling API:
@@ -100,12 +99,12 @@ Output:
 ```shell
 [
   ["options", "/api/v1/", "List all end-points of current application"],
-  ["options", "/api/v1/vectors/", "List API-options for vectors"],
-  ["get", "/api/v1/vectors/", "List/Search all vectors"],
-  ["post", "/api/v1/vectors/", "Create a new Vector"],
-  ["get", "/api/v1/vectors/:id", "Find a Vector by Id"],
-  ["post", "/api/v1/vectors/:id", "Find a Vector by Id and update it (particulary)"],
-  ["delete", "/api/v1/vectors/:id", "Find a Vector by Id and delete it."]
+  ["options", "/api/v1/contacts/", "List API-options for contacts"],
+  ["get", "/api/v1/contacts/", "List/Search all contacts"],
+  ["post", "/api/v1/contacts/", "Create a new Contact"],
+  ["get", "/api/v1/contacts/:id", "Find a Contact by Id"],
+  ["post", "/api/v1/contacts/:id", "Find a Contact by Id and update it (particulary)"],
+  ["delete", "/api/v1/contacts/:id", "Find a Contact by Id and delete it."]
 ]
 ```
 
@@ -689,12 +688,24 @@ Output:
 Lookout the **merest** doesn't clean the response from exposed methods.
 So, you should do it by your own code.
 
+<a name="release_notes"></a>
+-------------------------------------------------------------------------------
+### Release notes:
+
+1. **Release 1.0.x** - basic rest-api functionality
+2. **Release 1.1.2**:
+  - swagger support
+  - query support extended with operation suffixes (__gt, __lt, etc.)
+
+
 <a name="to-do"></a>
 
 -------------------------------------------------------------------------------
 ### To do:
- - extend Cook-book
- - add `transformResponse` option
- - extend query support for method GET (`field__gt`, `field__ne`, `field__in` etc.)
- - extend `options` controller with supporting **swagger**
- - extend `options` controller with supporting **blueprint**
+ - [x] Add `transformResponse` option
+ - [x] Extend query support for method GET (`field__gt`, `field__ne`, `field__in` etc.)
+ - [x] Swagger documentation and swagger-ui support implemented
+ - [ ] Add json-schema validation for requests
+ - [ ] Extend swagger support with customization of request and response json-schemas
+ - [ ] Separate documentation from the project (publish it on github-pages)
+ - [ ] Extend Cook-book

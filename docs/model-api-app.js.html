@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: model-api-app.js | Merest</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">    <h1 class="page-title">Source: model-api-app.js</h1>
+
+
+
+
+
+
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+var express = require('express');
+var mongoose = require('mongoose');
+var ModelAPIRouter = require('./model-api-router');
+var ModelAPIError = require('./model-api-error');
+var controllers = require('./controllers');
+var middlewares = require('./middlewares');
+
+var path = require('path');
+
+var readMiddlwares = require('./helpers').readMiddlwares;
+
+/**
+ * @class ModelAPIExpress - Express application that provides an RESTfull API for different models
+ *
+ * @param  {Object} options          optional, object with options
+ * @return {ModelAPIExpress}         created Express application
+ */
+function ModelAPIExpress(options) {
+  options = options || {};
+  var app = express();
+  app.__proto__ = ModelAPIExpress.prototype;
+  app.$__ = {};
+  app.$__.options = options;
+  app._urls = [];
+  app._urlsDefined = false;
+
+  app.use(middlewares.registerApi(true, this));
+
+  if (options.transformResponse) {
+    app.use(middlewares.transformResponse(options.transformResponse));
+  }
+
+  app.on('mount', app.__finalize.bind(app));
+
+  var __originalListen = app.listen;
+  app.listen = function() {
+    app.__finalize();
+    return __originalListen.apply(app, arguments);
+  }
+
+  return app;
+};
+
+ModelAPIExpress.prototype = Object.create(Function.prototype);
+ModelAPIExpress.prototype.constructor = ModelAPIExpress;
+
+/**
+ * SWAGGER_SUPPORT indicates that the module version supports the swagger
+ */
+ModelAPIExpress.prototype.SWAGGER_SUPPORT = true;
+
+/**
+ * ModelAPIExpress.prototype.expose([middleware, ..., ]model[, options) - exposes the
+ * mongoose model as RESTFull json service
+ *
+ * @paran  {String}     path                the path to mount exposed model
+ * @param  {Function}   middleware...       the middlewares that should be called
+ * before each RESTFull api call
+ * @param  {Mogoose.Model}    model         the model to be exposed
+ * @param  {Object}           options       RESTFull-API options see ModelAPIRouter
+ * @return {ModelAPIExpress}                itself
+ */
+ModelAPIExpress.prototype.expose = function() {
+  var path, middleware, model, options, si = 0, ml;
+  path = arguments.length &amp;&amp; arguments[0];
+  if (typeof path === "string") {
+    si = 1;
+  } else {
+    path = null;
+  }
+  var middlewares = readMiddlwares(arguments, si);
+  ml = middlewares &amp;&amp; middlewares.length || 0;
+
+  model = arguments[ml + si];
+  options = arguments[ml + si + 1] || {};
+  if (path) { options.path = path }
+  if (ml) { options.middlewares = middlewares }
+
+  var router = new ModelAPIRouter(model, options);
+  this.__attachOptions();
+  router.attachTo(this);
+  return this;
+};
+
+/**
+ * ModelAPIExpress.prototype.__attachOptions - attaches the options controller
+ *
+ * @private
+ */
+ModelAPIExpress.prototype.__attachOptions = function() {
+  var app = this;
+  var options = app.$__.options;
+  if (options &amp;&amp; !(options.options === false) &amp;&amp; !options.optionsAttached) {
+    app.options('/', controllers.options.bind(app));
+    app._urls.push([
+      'options', '/', 'List all end-points of current application'
+    ]);
+    options.optionsAttached = true;
+  }
+}
+
+/**
+ * ModelAPIExpress.prototype.urls - returns avaliable list of end-points
+ *
+ * @return {Array}  list of end-points
+ */
+ModelAPIExpress.prototype.urls = function() {
+  if (this._urlsDefined) return this._urls;
+  if (!this.mountpath) return [];
+  if (!this.__routers || !this.__routers.length) return [];
+
+  this._urlsDefined = true;
+  if (this.mountpath != '/') {
+    for (var i=0; i&lt;this._urls.length; i++) {
+      this._urls[i][1] = path.join(this.mountpath, this._urls[i][1]);
+    }
+  }
+  var router;
+  for (var i=0; i&lt;this.__routers.length; i++) {
+    router = this.__routers[i];
+    this._urls = this._urls.concat(router.urls(this.mountpath));
+  }
+  return this._urls;
+}
+
+/**
+ * @protected
+ */
+ModelAPIExpress.prototype.__addModelAPIrouter = function(router) {
+
+  this.__routers = this.__routers || [];
+  if (this.__routers.indexOf(router) >= 0) return this;
+  this.__routers.push(router);
+}
+
+/**
+ * @private
+ */
+ModelAPIExpress.prototype.__finalize = function() {
+  this.use(controllers.notSupported);
+  this.use(controllers.error);
+  this.urls();
+}
+
+module.exports = exports = ModelAPIExpress;
+</code></pre>
+        </article>
+    </section>
+
+
+</div>
+
+<nav><h2>
+  <a href="index.html">merest</a>
+</h2>
+
+<h3><a href="installation.html">Installation</a></h3>
+<ul>
+  <li><a href="installation.html#prerequisites">Prerequisites</a></li>
+  <li><a href="installation.html#npm-install">npm installation</a></li>
+  <li><a href="installation.html#development">Development</a></li>
+</ul>
+
+<h3><a href="cook-book.html">Cook-book</a></h3>
+
+<h3><a href="configuration.html">API Configuration</a></h3>
+<ul>
+  <li><a href="configuration.html#levels">Configuration levels</a></li>
+  <li><a href="configuration.html#app">API Application</a></li>
+  <li><a href="configuration.html#router">Router</a></li>
+  <li><a href="configuration.html#end-point">End-point</a></li>
+  <li><a href="configuration.html#methods">Model methods</a></li>
+</ul>
+
+<h3><a href="end-points.html">API Requests and Responses</a></h3>
+<ul>
+  <li><a href="end-points.html">Common reponses</a></li>
+  <li><a href="end-points.html#ep_options">Options</a></li>
+  <li><a href="end-points.html#ep_search">Search</a></li>
+  <li><a href="end-points.html#ep_create">Create</a></li>
+  <li><a href="end-points.html#ep_details">Details</a></li>
+  <li><a href="end-points.html#ep_update">Update</a></li>
+  <li><a href="end-points.html#ep_delete">Delete</a></li>
+  <li><a href="end-points.html#transform-response">Custom response</a></li>
+</ul>
+
+<h3><a href="swagger.html">Swagger support</a></h3>
+<ul>
+  <li><a href="swagger.html#install">Installation</a></li>
+  <li><a href="swagger.html#api-conf">Configure API</a></li>
+  <li><a href="swagger.html#document">Creating <code>swagger.json</code></a></li>
+  <li><a href="swagger.html#api-docs">Exposing the api-docs</a></li>
+  <li><a href="swagger.html#swagger-ui">Embedded swagger-ui</a></li>
+</ul>
+
+<h3>Specifications</h3>
+<ul>
+  <li><a href="ModelAPIError.html">ModelAPIError</a></li>
+  <li><a href="ModelAPIExpress.html">ModelAPIExpress</a></li>
+  <li><a href="ModelAPIRouter.html">ModelAPIRouter</a></li>
+</ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated with <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

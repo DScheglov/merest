@@ -30,12 +30,14 @@
   "devDependencies": {
     "async": "^1.5.0",
     "body-parser": "^1.15.2",
+    "colors": "^1.1.2",
     "express": "^4.14.0",
     "istanbul": "^0.4.5",
     "method-override": "^2.3.7",
     "mocha": "^2.5.3",
     "mongoose": "^4.7.2",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "twig": "^0.10.3"
   },
   "dependencies": {},
   "repository": {

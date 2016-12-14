@@ -1,0 +1,42 @@
+{% extends "includes/base-layout.twig" %}
+
+{% block title %}Installation | Merest{% endblock %}
+{% block content %}
+<h1 class="page-title">Installation</h1>
+<section>
+  <article>
+    <a name='prerequisites'></a>
+    <h3>Prerequisites</h3>
+    <p>You should install:
+      <ul>
+        <li>NodeJS v.5+</li>
+        <li>MongoDB v.3.2.11+</li>
+      </ul>
+      The module was not tested in another environment.
+    </p>
+
+  <a name="npm-install"></a>
+  <h3>Installing with <strong>npm</strong>:</h3>
+<pre class="prettyprint source lang-shell"><code>npm install ---save merest
+</code></pre>
+  <p><strong>merest</strong> doesn't install Mongoose or Express in production environment.
+    It is crucial to embed API into your project correctly. You should to install
+    these components by yourself.
+  </p>
+  <p>Recommended components:</p>
+  <pre class="prettyprint source lang-shell"><code>npm install --save mongoose express body-parser method-override
+</code></pre>
+
+  <a name="development"></a>
+  <h3>Development</h3>
+<pre class="prettyprint source lang-shell"><code>git clone https://github.com/DScheglov/merest
+cd merest
+npm install
+npm test
+</code></pre>
+    <br class="clear">
+    <hr>
+    <a href='index.html'>< Previous (merest)</a> | <a href='cook-book.html'>Next (Cook-book) ></a>
+  </article>
+</section>
+{% endblock %}

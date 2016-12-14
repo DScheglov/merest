@@ -1,0 +1,1029 @@
+{% extends "includes/base-layout.twig" %}
+
+{% block title %}Class: ModelAPIRouter | Merest{% endblock %}
+{% block content %}
+<h1 class="page-title">Class: ModelAPIRouter</h1>
+
+<section>
+<header>
+
+        <h2>ModelAPIRouter</h2>
+
+            <div class="class-description"><p>ModelAPIRouter - express router dispatches REST-calls to api-controllers</p></div>
+
+
+</header>
+
+<article>
+    <div class="container-overview">
+
+
+
+
+    <h2>Constructor</h2>
+
+
+    <h4 class="name" id="ModelAPIRouter"><span class="type-signature"></span>new ModelAPIRouter<span class="signature">(model, options)</span><span class="type-signature"> &rarr; {<a href="ModelAPIRouter.html">ModelAPIRouter</a>}</span></h4>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+
+
+<table class="params">
+    <thead>
+    <tr>
+
+        <th>Name</th>
+
+
+        <th>Type</th>
+
+
+
+
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+
+        <tr>
+
+                <td class="name"><code>model</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">mongoose.Model</span>
+|
+
+<span class="param-type">String</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>model to be exposed</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>options</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Object</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>exposion options</p>
+                <h6>Properties</h6>
+
+
+<table class="params">
+    <thead>
+    <tr>
+
+        <th>Name</th>
+
+
+        <th>Type</th>
+
+
+
+
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+
+        <tr>
+
+                <td class="name"><code>options</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">Boolean</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>options for OPTIONS http-method</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>create</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">Boolean</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>options for CREATE REST-method</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>search</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">Boolean</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>options for SEARCH(LIST) REST-method</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>details</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">Boolean</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>options for DETAILS REST-method</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>update</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">Boolean</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>options for UPDATE REST-method</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>delete</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">Boolean</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>options for DELETE REST-method</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>expose</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">Boolean</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>options for exposing methods of model</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>exposeStatic</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">Boolean</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>options for exposing static model methods</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>path</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">String</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>the path to mount router (levels: router|METHOD)</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>filter</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">function</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>the mongodb-filter object or function that returns the same type object (levels: router|METHOD)</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>fields</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Object</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>the mongodb-fields descriptor (levels: router|METHOD)</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>queryFields</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Object</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>the object with keys that defines allow to use field in query or not</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>popuplate</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">String</span>
+|
+
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">Array</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>the mongoose population descriptor (levels: router|METHOD)</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>skip</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Boolean</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>the flag to allow or deny skipping documents (levels: router|METHOD)</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>limit</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Boolean</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>the flag to allow or deny limit documents number (levels: router|METHOD)</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>sort</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">Object</span>
+|
+
+<span class="param-type">Boolean</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>the flag or an object that defines fields to be used for documents corting (levels: router|METHOD)</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>middlewares</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">function</span>
+|
+
+<span class="param-type">Array</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>the Function or Array of Function that should be called before the router controller will be called (levels: router|METHOD)</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>matchId</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">String</span>
+|
+
+<span class="param-type">RegExp</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>the String or RegExp that allows to identify values of _id to build correct routing paths</p></td>
+        </tr>
+
+
+
+        <tr>
+
+                <td class="name"><code>title</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">String</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>the short description of the path</p></td>
+        </tr>
+
+
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="model-api-router.js.html">model-api-router.js</a>, <a href="model-api-router.js.html#line42">line 42</a>
+    </li></ul></dd>
+
+
+
+
+
+
+
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+
+<div class="param-desc">
+    <p>created router</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+
+<span class="param-type"><a href="ModelAPIRouter.html">ModelAPIRouter</a></span>
+
+
+    </dd>
+</dl>
+
+
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <h3 class="subsection-title">Methods</h3>
+
+
+
+
+
+
+    <h4 class="name" id="attachTo"><span class="type-signature"></span>attachTo<span class="signature">(app)</span><span class="type-signature"> &rarr; {<a href="ModelAPIRouter.html">ModelAPIRouter</a>}</span></h4>
+
+
+
+
+
+<div class="description">
+    <p>ModelAPIRouter.prototype.attachTo - attaches the router to the ModelAPIExpress</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+
+
+<table class="params">
+    <thead>
+    <tr>
+
+        <th>Name</th>
+
+
+        <th>Type</th>
+
+
+
+
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+
+        <tr>
+
+                <td class="name"><code>app</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type"><a href="ModelAPIExpress.html">ModelAPIExpress</a></span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>the express application to which the router
+should be add</p></td>
+        </tr>
+
+
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="model-api-router.js.html">model-api-router.js</a>, <a href="model-api-router.js.html#line150">line 150</a>
+    </li></ul></dd>
+
+
+
+
+
+
+
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+
+<div class="param-desc">
+    <p>self</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+
+<span class="param-type"><a href="ModelAPIRouter.html">ModelAPIRouter</a></span>
+
+
+    </dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+    <h4 class="name" id="urls"><span class="type-signature"></span>urls<span class="signature">(rootPath)</span><span class="type-signature"> &rarr; {Array}</span></h4>
+
+
+
+
+
+<div class="description">
+    <p>ModelAPIRouter.prototype.urls - returns avaliable urls</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+
+
+<table class="params">
+    <thead>
+    <tr>
+
+        <th>Name</th>
+
+
+        <th>Type</th>
+
+
+
+
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+
+        <tr>
+
+                <td class="name"><code>rootPath</code></td>
+
+
+            <td class="type">
+
+
+<span class="param-type">String</span>
+
+
+
+            </td>
+
+
+
+
+
+            <td class="description last"><p>the path to the router (before it)</p></td>
+        </tr>
+
+
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="model-api-router.js.html">model-api-router.js</a>, <a href="model-api-router.js.html#line171">line 171</a>
+    </li></ul></dd>
+
+
+
+
+
+
+
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+
+<div class="param-desc">
+    <p>the list of avaliable urls</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+
+<span class="param-type">Array</span>
+
+
+    </dd>
+</dl>
+
+</article>
+
+</section>
+
+
+
+
+{% endblock %}
