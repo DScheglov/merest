@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "NODE_ENV=test istanbul cover _mocha -- -R spec"
+    "test-all": "NODE_ENV=test istanbul cover _mocha -- -R spec",
+    "test": "mocha test/suites/extended-search"
   },
   "keywords": [
     "Mongoose",
