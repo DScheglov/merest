@@ -185,6 +185,9 @@ describe('Searching with __<oper>', function (done) {
       url: util.format('%s/api/v1/books?year__lt=1900&year__gt=2000&year=1866', testUrl)
     }, function (err, res, body) {
       assert.ok(!err);
+      if (res.statusCode !== 200) {
+        console.log(body);
+      }
       assert.equal(res.statusCode, 200);
       if (typeof(body) == "string") {
         body = JSON.parse(body);
