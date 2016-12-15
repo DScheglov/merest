@@ -1,0 +1,91 @@
+{% extends "includes/base-layout.twig" %}
+
+{% block title %}Configuration | Merest{% endblock %}
+{% block content %}
+<h1 class="page-title">API Configuration</h1>
+<section>
+    <article>
+  <a name='router'></a>
+  <h3>Router configuration</h3>
+      <p>
+        To expose <code>mongoose.Model</code> you should create an API Router.
+        It could be done in two ways:
+        <ul>
+          <li>By calling <code>ModelAPIExpress.expose</code> method</li>
+          <li>By creating <code>ModelAPIRouter</code> and then attaching it with method
+            <code>attachTo</code> to <code>ModelAPIExpress</code>
+          </li>
+        </ul>
+      </p>
+
+      <p>Using <code>ModelAPIExpress.expose</code>:</p>
+<pre class="prettyprint source lang-javascript"><code>const api = new merest.ModelAPIExpress();
+
+api.expose(models.Vector, {
+  // router configuration parameters should be here
+});</code></pre>
+
+<p>Creating <code>ModelAPIRouter</code> explicitly:</p>
+<pre class="prettyprint source lang-javascript">const api = new merest.ModelAPIExpress();
+const vectorApi = new merest.ModelAPIRouter(models.Vector, {
+  // router configuration parameters should be here
+});
+
+vectorApi.attachTo(api);</code></pre>
+
+<p><strong>merest</strong> supports wide range of router configuration parameters:</p>
+<pre class="prettyprint source lang-javascript"><code>var api = new merest.ModelAPIExpress();
+api.expose(models.Vector, {
+  path: '/cool-vectors', // overrides standard /model-plural-name path
+  options: false, // disables end-point for OPTIONS method
+  create: 'get', // mounts the CREATE end-point on the HTTP GET method
+  search: 'post', // mounts the SEARCH end-point on the HTTP POST to resolve path-conflict with CREATE end-point
+  details: 'Show details for a vector', // assigns the description for DETAILS end-point
+  update: 'put', // mounts UPDATE end-point to the HTTP PUT
+  delete: false, // disables to delete vectors
+  fields: 'x y', // forces to response with x, y and _id fields
+  matchId: '\d+' // configures the /:id routes with integer (not uuid) :id parameter
+});</code></pre>
+
+
+<h4>All router configuration parameters are:</h4><ul>
+<li><strong>path</strong>: <code>String</code> -  the base path for all router end-points. It is relative to the api mounted path</li>
+<li><strong>middlewares</strong>: <code>Function|Array(Function)</code> -  the middleware(s) that should be mounted on the base path of all end-points</li>
+<li><strong>matchId</strong>: <code>String|RegExp</code> - the pattern to match values of <code>id</code> (<code>_id</code>) field in the end-point path. The default is <code>'[a-f\\d]{24}'</code></li>
+<li><strong>options</strong>: <code>Boolean|String|Object</code> -  configuration for OPTIONS HTTP-method</li>
+<li><strong>create</strong>: <code>Boolean|String|Object</code> - configuration for Instance creation</li>
+<li><strong>search</strong>: <code>Boolean|String|Object</code> - configuration for searching of instances-</li>
+<li><strong>details</strong>: <code>Boolean|String|Object</code> - configuration for instance details end-point</li>
+<li><strong>update</strong>: <code>Boolean|String|Object</code> - configuration for instance update</li>
+<li><strong>delete</strong>: <code>Boolean|String|Object</code> - configuration for instance removing</li>
+<a name="expose"></a>
+<li><strong>expose</strong>: <code>Object</code> - configuration for instance method(s) exposition. (see. <a href="conf-methods.html">Model methods</a> for details)</li>
+<li><strong>exposeStatic</strong>: <code>Object</code> - configuration for static method(s) exposition (see. <a href="conf-methods.html">Model methods</a> for details)</li>
+</ul>
+<p>Additionally some of end-point parameters could be specified on the router configuration level:
+  <code>fields</code>, <code>populate</code>, <code>filter</code>, <code>readonly</code>
+</p>
+<p>Also some of end-points parameters are applicable exactly for one end-point <code>SEARCH</code>.
+So it is reasonable to define them in the router level. These parameters are:
+<code>queryFields</code>, <code>sort</code>, <code>limit</code>, <code>skip</code>,
+</p>
+
+<p>Parameters named as end-points (create, search, etc.) could be one of: <code>Boolean</code>, <code>String</code> and <code>Object</code>.</p>
+<h5>In case of <code>Boolean</code>:</h5><ul>
+<li><code>false</code>: appropriate end-point is disabled</li>
+<li><code>true</code>: the end-point is allowed and default or common (see further) options will be used to configure it</li>
+</ul>
+<h5>In case of <code>String</code>:</h5><p>If value is some of HTTP-method supported by Express (<code>checkout</code>, <code>copy</code>, <code>delete</code>, <code>get</code>, <code>head</code>, <code>lock</code>, <code>merge</code>, <code>mkactivity</code>, <code>mkcol</code>, <code>move</code>, <code>'m-search'</code>, <code>notify</code>, <code>options</code>, <code>patch</code>, <code>post</code>, <code>purge</code>, <code>put</code>, <code>report</code>, <code>search</code>, <code>subscribe</code>, <code>trace</code>, <code>unlock</code>, <code>unsubscribe</code>), then the appropriate method is allowed and will be
+mounted on specified HTTP-method.
+Otherwise the value will be used as a description of the appropriate end-point returned
+by the OPTIONS HTTP-method and swagger api-documentation</p>
+<h5>In case of <code>Object</code>:</h5>
+<p>The appropriate end-point is allowed and keys of the value will be used to configure this end-point.</p>
+<p>The end-point configuration options are bellow.</p>
+
+<br class="clear">
+<hr>
+<a href='installation.html'>Next (Installation) ></a>
+</article>
+</section>
+{% endblock %}

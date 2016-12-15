@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Class: ModelAPIError | Merest</title>
+    <title>Configuration | Merest</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -15,230 +15,33 @@
 
 <body>
 
-<div id="main">    <h1 class="page-title">Class: ModelAPIError</h1>
-
-
-
-
-
-
-    <section>
-
-    <header>
-
-            <h2>ModelAPIError</h2>
-
-                <div class="class-description">ModelAPIError - extends Error</div>
-
-
-    </header>
-
+<div id="main">
+<h1 class="page-title">API Configuration</h1>
+<section>
     <article>
-        <div class="container-overview">
-
-
-
-
-        <h2>Constructor</h2>
-
-
-        <h4 class="name" id="ModelAPIError"><span class="type-signature"></span>new ModelAPIError<span class="signature">(code, message)</span><span class="type-signature"> &rarr; {<a href="ModelAPIError.html">ModelAPIError</a>}</span></h4>
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <h5>Parameters:</h5>
-
-
-    <table class="params">
-        <thead>
-        <tr>
-
-            <th>Name</th>
-
-
-            <th>Type</th>
-
-
-
-
-
-            <th class="last">Description</th>
-        </tr>
-        </thead>
-
-        <tbody>
-
-
-            <tr>
-
-                    <td class="name"><code>code</code></td>
-
-
-                <td class="type">
-
-
-    <span class="param-type">Number</span>
-    |
-
-    <span class="param-type">String</span>
-
-
-
-                </td>
-
-
-
-
-
-                <td class="description last">the code should be transfered as HTTP-response code</td>
-            </tr>
-
-
-
-            <tr>
-
-                    <td class="name"><code>message</code></td>
-
-
-                <td class="type">
-
-
-    <span class="param-type">String</span>
-    |
-
-    <span class="param-type">Error</span>
-
-
-
-                </td>
-
-
-
-
-
-                <td class="description last">the description of error</td>
-            </tr>
-
-
-        </tbody>
-    </table>
-
-
-
-
-
-
-    <dl class="details">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <dt class="tag-source">Source:</dt>
-        <dd class="tag-source"><ul class="dummy"><li>
-            <a href="model-api-error.js.html">model-api-error.js</a>, <a href="model-api-error.js.html#line10">line 10</a>
-        </li></ul></dd>
-
-
-
-
-
-
-
-    </dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Returns:</h5>
-
-
-    <div class="param-desc">
-        the ModelAPIError
-    </div>
-
-
-
-    <dl>
-        <dt>
-            Type
-        </dt>
-        <dd>
-
-    <span class="param-type"><a href="ModelAPIError.html">ModelAPIError</a></span>
-
-
-        </dd>
-    </dl>
-
-
-
-
-
-
-        </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </article>
-
-    </section>
-
+      <a name='levels'></a>
+      <h3>Configuration levels</h3>
+      <p><strong>merest</strong> allows to configure your API on three levels:
+        <ol>
+          <li>API Application</li>
+          <li>Model router</li>
+          <li>End-point</li>
+        </ol>
+        The schema is on the pic. bellow:
+      </p>
+      <img src="images/merest-conf-levels.gif">
+
+  <h3>Read more about configuration</h3>
+  <h4><a href="conf-app.html">Configuring API application</a></h4>
+  <h4><a href="conf-router.html">Router configuration</a></h4>
+  <h4><a href="conf-end-points.html">End-point configuration</a></h4>
+  <h4><a href="conf-methods.html">Model methods</a></h4>
+
+<br class="clear">
+<hr>
+<a href='installation.html'>Next (Installation) ></a>
+</article>
+</section>
 </div>
 
 <nav><h2>

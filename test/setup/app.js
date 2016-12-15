@@ -15,7 +15,6 @@ function init() {
   var callback = arguments[arguments.length-1];
   app = express();
   app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
   app.use(methodOverride());
   callback();
 }

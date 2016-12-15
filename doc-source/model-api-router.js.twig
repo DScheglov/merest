@@ -30,26 +30,26 @@ var exposeMethods = helpers.exposeMethods;
  * @class ModelAPIRouter - express router dispatches REST-calls to api-controllers
  *
  * @param  {mongoose.Model|String}  model    model to be exposed
- * @param  {Object}                 options  exposion options
- * @param  {Object|Boolean}         options.options   options for OPTIONS http-method
- * @param  {Object|Boolean}         options.create    options for CREATE REST-method
- * @param  {Object|Boolean}         options.search    options for SEARCH(LIST) REST-method
- * @param  {Object|Boolean}         options.details   options for DETAILS REST-method
- * @param  {Object|Boolean}         options.update    options for UPDATE REST-method
- * @param  {Object|Boolean}         options.delete    options for DELETE REST-method
- * @param  {Object|Boolean}         options.expose    options for exposing methods of model
- * @param  {Object|Boolean}         options.exposeStatic   options for exposing static model methods
- * @param  {String}                 options.path      the path to mount router (levels: router|METHOD)
- * @param  {Object|Function}        options.filter    the mongodb-filter object or function that returns the same type object (levels: router|METHOD)
- * @param  {Object}                 options.fields    the mongodb-fields descriptor (levels: router|METHOD)
- * @param  {Object}                 options.queryFields  the object with keys that defines allow to use field in query or not
- * @param  {String|Object|Array}    options.popuplate the mongoose population descriptor (levels: router|METHOD)
- * @param  {Boolean}                options.skip      the flag to allow or deny skipping documents (levels: router|METHOD)
- * @param  {Boolean}                options.limit     the flag to allow or deny limit documents number (levels: router|METHOD)
- * @param  {Object|Boolean}         options.sort      the flag or an object that defines fields to be used for documents corting (levels: router|METHOD)
- * @param  {Function|Array}         options.middlewares  the Function or Array of Function that should be called before the router controller will be called (levels: router|METHOD)
- * @param  {String|RegExp}          options.matchId   the String or RegExp that allows to identify values of _id to build correct routing paths
- * @param  {String}                 options.title     the short description of the path
+ * @param  {Object}                 [options]  router configuration object
+ * @param  {Object|Boolean}         [options.options]   options for OPTIONS http-method
+ * @param  {Object|Boolean}         [options.create]    options for CREATE REST-method
+ * @param  {Object|Boolean}         [options.search]    options for SEARCH(LIST) REST-method
+ * @param  {Object|Boolean}         [options.details]   options for DETAILS REST-method
+ * @param  {Object|Boolean}         [options.update]    options for UPDATE REST-method
+ * @param  {Object|Boolean}         [options.delete]    options for DELETE REST-method
+ * @param  {Object|Boolean}         [options.expose]    options for exposing methods of model
+ * @param  {Object|Boolean}         [options.exposeStatic]   options for exposing static model methods
+ * @param  {String}                 [options.path]      the path to mount router (levels: router|METHOD)
+ * @param  {Object|Function}        [options.filter]    the mongodb-filter object or function that returns the same type object (levels: router|METHOD)
+ * @param  {Object}                 [options.fields]    the mongodb-fields descriptor (levels: router|METHOD)
+ * @param  {Object}                 [options.queryFields]  the object with keys that defines allow to use field in query or not
+ * @param  {String|Object|Array}    [options.popuplate] the mongoose population descriptor (levels: router|METHOD)
+ * @param  {Boolean}                [options.skip]      the flag to allow or deny skipping documents (levels: router|METHOD)
+ * @param  {Boolean}                [options.limit]     the flag to allow or deny limit documents number (levels: router|METHOD)
+ * @param  {Object|Boolean}         [options.sort]      the flag or an object that defines fields to be used for documents corting (levels: router|METHOD)
+ * @param  {Function|Array}         [options.middlewares]  the Function or Array of Function that should be called before the router controller will be called (levels: router|METHOD)
+ * @param  {String|RegExp}          [options.matchId]   the String or RegExp that allows to identify values of _id to build correct routing paths
+ * @param  {String}                 [options.title]     the short description of the path
  * @return {ModelAPIRouter}                  created router
  */
 function ModelAPIRouter(model, options) {
@@ -156,9 +156,9 @@ ModelAPIRouter.prototype.option = function(method, name) {
 /**
  * ModelAPIRouter.prototype.attachTo - attaches the router to the ModelAPIExpress
  *
- * @param  {ModelAPIExpress} app    the express application to which the router
- * should be add
+ * @param  {ModelAPIExpress} app    the API Application to which the router should be mounted
  * @return {ModelAPIRouter}         self
+ *
  */
 ModelAPIRouter.prototype.attachTo = function(app) {
   if (this.application) return this;

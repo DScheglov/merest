@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Configuration | Merest</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+<h1 class="page-title">API Configuration</h1>
+<section>
+    <article>
+
+<a name='end-point'></a>
+<h3>End-point configuration options:</h3>
+<p>To configure end-point you should to specify appropriate router-level paramter with end-point
+  configuration object. For instance, like that:</p>
+<pre class="prettyprint source lang-javascript"><code>var api = new merest.ModelAPIExpress();
+api.expose(models.Book, {
+  details: { populate: 'author' }
+});</code></pre>
+
+<h4>All end-point configuration parameters are the following:</h4>
+<ul>
+<li><strong>path</strong>: <code>String</code> - <code>additional-path</code> of end-point</li>
+<li><strong>method</strong>: <code>String</code> -- HTTP-method to mount appropriate end-point</li>
+<li><strong>filter</strong>: <code>Object|Function</code> - Mongoose query-object or function that returns such object. The function receives <code>request</code> (Express Incoming Message) as only parameter. The function is executing in synchronous mode.</li>
+<li><strong>fields</strong>: <code>Object|Array|String</code> - Mongoose field-selection parameter</li>
+<li><strong>readonly</strong>: <strong>reserved</strong>,</li>
+<li><strong>queryFields</strong>: <code>Object</code> - keys of the objects are names of fields. If value of the key is equal to false, the correspondent field will be excluded from the query. Affects on <code>search</code> end-point only.</li>
+<li><strong>populate</strong>: <code>Array|Object|String</code> - Mongoose field population parameter</li>
+<li><strong>skip</strong>: <code>Boolean</code> - allows or disables skipping documents in the search result. Affects on <code>search</code> end-point only.</li>
+<li><strong>limit</strong>: <code>Boolean</code> - allows on denies limitation of documents in the search result. Affects on <code>search</code> end-point only.</li>
+<li><strong>sort</strong>: <code>Boolean|Object</code> -- allows or denies (in case of <code>false</code>) the sorting. Object keys are names of the fields. The value of appropriate key allows or denies to sort by this field. Affects on <code>search</code> end-point only. The mongodb field paths could be used as keys of <code>sort</code>-object.</li>
+<li><strong>middlewares</strong>: <code>Function|Array</code> - middleware function or array of such functions. The middleware(s) will be mounted to the end-point route as usual express middleware</li>
+<li><strong>title</strong>: <code>String</code> - the description of the end-point</li>
+</ul>
+<p>Allmost all of described above options (excl. <code>method</code>, <code>path</code>, <code>title</code>) could be assigned also
+on the router-level. In this case it will be applied to all applicable end-points if end-point doesn't override appropriate parameter directly.</p>
+<pre class="prettyprint source lang-javascript"><code>var api = new merest.ModelAPIExpress();
+api.expose(models.Vector, { // Model-routes level
+  options: false, // end-point level
+  update: 'put', // end-point level - update controller will be mounted on the PUT HTTP-method
+  search: { // end-point level - search controller will be mounted
+    method: 'post',  // on the POST HTTP-method
+    path: '/search'  // on /search
+  }
+  fields: { // Model-routes level
+    x: true,
+    y: true,
+    _id: false
+  }
+});</code></pre><p>Calling API:</p>
+<pre class="prettyprint source lang-shell"><code>curl -X OPTIONS http://localhost:1337/api/v1/</code></pre><p>Output:</p>
+<pre class="prettyprint source lang-shell"><code>[
+  ["options", "/api/v1/", "List all end-points of current application"],
+  ["post", "/api/v1/vectors/search", "List/Search all vectors"],
+  ["post", "/api/v1/vectors/", "Create a new Vector"],
+  ["get", "/api/v1/vectors/:id", "Find a Vector by Id"],
+  ["put", "/api/v1/vectors/:id", "Find a Vector by Id and update it (particulary)"],
+  ["delete", "/api/v1/vectors/:id", "Find a Vector by Id and delete it."]
+]</code></pre><p>If paraneter <strong>path</strong> is assigned on the router-level it will be used as end-point sub-path
+instead of Model collection name (plural).</p>
+<br class="clear">
+<hr>
+<a href='installation.html'>Next (Installation) ></a>
+</article>
+</section>
+</div>
+
+<nav><h2>
+  <a href="index.html">merest</a>
+</h2>
+
+<h3><a href="installation.html">Installation</a></h3>
+<ul>
+  <li><a href="installation.html#prerequisites">Prerequisites</a></li>
+  <li><a href="installation.html#npm-install">npm installation</a></li>
+  <li><a href="installation.html#development">Development</a></li>
+</ul>
+
+<h3><a href="cook-book.html">Cook-book</a></h3>
+
+<h3><a href="conf-levels.html">API Configuration</a></h3>
+<ul>
+  <li><a href="conf-levels.html">Configuration levels</a></li>
+  <li><a href="conf-app.html">API Application</a></li>
+  <li><a href="conf-router.html">Router</a></li>
+  <li><a href="conf-end-points.html">End-point</a></li>
+  <li><a href="conf-methods.html">Model methods</a></li>
+</ul>
+
+<h3><a href="end-points.html">API Requests and Responses</a></h3>
+<ul>
+  <li><a href="end-points.html">Common reponses</a></li>
+  <li><a href="end-points.html#ep_options">Options</a></li>
+  <li><a href="end-points.html#ep_search">Search</a></li>
+  <li><a href="end-points.html#ep_create">Create</a></li>
+  <li><a href="end-points.html#ep_details">Details</a></li>
+  <li><a href="end-points.html#ep_update">Update</a></li>
+  <li><a href="end-points.html#ep_delete">Delete</a></li>
+  <li><a href="end-points.html#transform-response">Custom response</a></li>
+</ul>
+
+<h3><a href="swagger.html">Swagger support</a></h3>
+<ul>
+  <li><a href="swagger.html#install">Installation</a></li>
+  <li><a href="swagger.html#api-conf">Configure API</a></li>
+  <li><a href="swagger.html#document">Creating <code>swagger.json</code></a></li>
+  <li><a href="swagger.html#api-docs">Exposing the api-docs</a></li>
+  <li><a href="swagger.html#swagger-ui">Embedded swagger-ui</a></li>
+</ul>
+
+<h3>Specifications</h3>
+<ul>
+  <li><a href="ModelAPIError.html">ModelAPIError</a></li>
+  <li><a href="ModelAPIExpress.html">ModelAPIExpress</a></li>
+  <li><a href="ModelAPIRouter.html">ModelAPIRouter</a></li>
+</ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated with <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

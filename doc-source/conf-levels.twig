@@ -1,0 +1,31 @@
+{% extends "includes/base-layout.twig" %}
+
+{% block title %}Configuration | Merest{% endblock %}
+{% block content %}
+<h1 class="page-title">API Configuration</h1>
+<section>
+    <article>
+      <a name='levels'></a>
+      <h3>Configuration levels</h3>
+      <p><strong>merest</strong> allows to configure your API on three levels:
+        <ol>
+          <li>API Application</li>
+          <li>Model router</li>
+          <li>End-point</li>
+        </ol>
+        The schema is on the pic. bellow:
+      </p>
+      <img src="images/merest-conf-levels.gif">
+
+  <h3>Read more about configuration</h3>
+  <h4><a href="conf-app.html">Configuring API application</a></h4>
+  <h4><a href="conf-router.html">Router configuration</a></h4>
+  <h4><a href="conf-end-points.html">End-point configuration</a></h4>
+  <h4><a href="conf-methods.html">Model methods</a></h4>
+
+<br class="clear">
+<hr>
+<a href='installation.html'>Next (Installation) ></a>
+</article>
+</section>
+{% endblock %}

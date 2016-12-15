@@ -28,7 +28,12 @@ var readMiddlwares = require('./helpers').readMiddlwares;
  * @class ModelAPIExpress - Express application that provides an RESTfull API for different models
  *
  * @param  {Object} options          optional, object with options
- * @return {ModelAPIExpress}         created Express application
+ * @param  {String} options.title    the title of API &lt;SWAGGER>
+ * @param  {String} options.path     The path of api root. The application doesn't mount it self on this path. &lt;SWAGGER>
+ * @param  {String} options.host     The host to reach API. &lt;SWAGGER>
+ * @param  {Boolean} [options.options]  allows or denies the OPTION end-point on the application level
+ * @param  {Function} [options.transformResponse] the function to transform standard response. For details see Transform response
+ * @return {ModelAPIExpress}         Created API application
  */
 function ModelAPIExpress(options) {
   options = options || {};
@@ -41,8 +46,13 @@ function ModelAPIExpress(options) {
 
   app.use(middlewares.registerApi(true, this));
 
-  if (options.transformResponse) {
-    app.use(middlewares.transformResponse(options.transformResponse));
+  var transformResponse = options.transformResponse instanceof Function ?
+    options.transformResponse :
+    null
+  ;
+
+  if (transformResponse) {
+    app.use(middlewares.transformResponse(transformResponse));
   }
 
   app.on('mount', app.__finalize.bind(app));
@@ -65,18 +75,16 @@ ModelAPIExpress.prototype.constructor = ModelAPIExpress;
 ModelAPIExpress.prototype.SWAGGER_SUPPORT = true;
 
 /**
- * ModelAPIExpress.prototype.expose([middleware, ..., ]model[, options) - exposes the
- * mongoose model as RESTFull json service
+ * ModelAPIExpress.prototype.expose - exposes the mongoose model as RESTFull json service
  *
- * @paran  {String}     path                the path to mount exposed model
- * @param  {Function}   middleware...       the middlewares that should be called
- * before each RESTFull api call
- * @param  {Mogoose.Model}    model         the model to be exposed
- * @param  {Object}           options       RESTFull-API options see ModelAPIRouter
- * @return {ModelAPIExpress}                itself
+ * @param  {String} [path]               the path to mount exposed model
+ * @param  {Function} [middleware]    one or more middlewares that should be called before each end-point controller
+ * @param  {Mongoose.Model} model        Mongoosee model to be exposed
+ * @param  {Object} [routerOptions]        ModelAPIRouter configuration object (see [Router configuration](configuration.html#router))
+ * @return {ModelAPIExpress}             itself
  */
-ModelAPIExpress.prototype.expose = function() {
-  var path, middleware, model, options, si = 0, ml;
+ModelAPIExpress.prototype.expose = function(path, middleware, model, routerOptions) {
+  var options, si = 0, ml;
   path = arguments.length &amp;&amp; arguments[0];
   if (typeof path === "string") {
     si = 1;
@@ -139,7 +147,7 @@ ModelAPIExpress.prototype.urls = function() {
 }
 
 /**
- * @protected
+ * @private
  */
 ModelAPIExpress.prototype.__addModelAPIrouter = function(router) {
 

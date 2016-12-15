@@ -49,51 +49,110 @@
         <li>serve the swagger-ui</li>
       </ul>
 
-      <h3>Getting started with <strong>merest</strong></h3>
+<h3>Getting started with <strong>merest</strong></h3>
 <pre class="prettyprint source lang-javascript"><code>'use strict';
 
 const merest = require('merest');
 const express = require('express');
 const bodyParser = require('body-parser');
-// to support HTTP OPTIONS and DELETE methods
 const methodOverride = require('method-override');
-const mongoose = require('mongoose');
 
-const ContactSchema = new mongoose.Schema({
-  name: {type: String, required: true},
-  email: String,
+// Defining model
+const mongoose = require('mongoose');
+const Contact = mongoose.model('Contact', new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
   phone: String,
   tags: [String]
-});
-
-const Contact = mongoose.model('Contact', ContactSchema);
-
-const api = new merest.ModelAPIExpress();
-api.expose(Contact);
-
-const app = express();
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(methodOverride());
-
-app.use('/api/v1', api); // exposing our API
-
+}));
 mongoose.connect('mongodb://localhost/merest-sample');
-app.listen(8000, function(){
+
+// Creating the Express application to serve API
+const api = new merest.ModelAPIExpress();
+
+api.use(bodyParser.json()); // Parsing JSON-bodies
+api.use(methodOverride()); // Supporting HTTP OPTIONS and HTTP DELETE methods
+
+api.expose(Contact); // Exposing our API
+
+api.listen(8000, () => {
   console.log('Express server listening on port 8000');
 });</code></pre><p>Calling API:</p>
-<pre class="prettyprint source lang-shell"><code>curl -X OPTIONS http://localhost:1337/api/v1/</code></pre>
-      <p>Output:</p>
+<pre class="prettyprint source lang-shell"><code>curl -X OPTIONS http://localhost:8000/</code></pre>
+<p>Output:</p>
 <pre class="prettyprint source lang-shell"><code>[
-  ["options", "/api/v1/", "List all end-points of current application"],
-  ["options", "/api/v1/contacts/", "List API-options for contacts"],
-  ["get", "/api/v1/contacts/", "List/Search all contacts"],
-  ["post", "/api/v1/contacts/", "Create a new Contact"],
-  ["get", "/api/v1/contacts/:id", "Find a Contact by Id"],
-  ["post", "/api/v1/contacts/:id", "Find a Contact by Id and update it (particulary)"],
-  ["delete", "/api/v1/contacts/:id", "Find a Contact by Id and delete it."]
+  ["options","/","List all end-points of current application"],
+  ["options","/contacts/","List API-options for contacts"],
+  ["get","/contacts/","List/Search all contacts"],
+  ["post","/contacts/","Create a new Contact"],
+  ["get","/contacts/:id","Find a Contact by Id"],
+  ["post","/contacts/:id","Find a Contact by Id and update it (particulary)"],
+  ["delete","/contacts/:id","Find a Contact by Id and delete it."]
 ]</code></pre>
+
+<p>Getting contact list:</p>
+<pre class="prettyprint source lang-shell"><code>curl -X GET http://localhost:8000/contacts</code></pre>
+<pre class="prettyprint source lang-shell"><code>[
+  {
+    "_id": "58503799b1ab13090f2eeb31",
+    "name": "Jack London",
+    "email": "j.l@mail.uk",
+    "__v": 0,
+    "phone": "+4123464575647",
+    "tags": ["author", "american"]
+  }, {
+    "_id": "585276ca2aadb34477ad4034",
+    "name": "Taras Shevchenko",
+    "email": "t.sh@mail.ua",
+    "__v": 0,
+    "tags": ["author", "poet", "painter", "national hero", "ukrainian"]
+  }
+]</code></pre>
+
+<h3>Integrating <strong>merest</strong> into existing projects</h3>
+<pre class="prettyprint source lang-javascript"><code>'use strict';
+
+const merest = require('merest-swagger'); // to support SwaggerUI
+const express = require('express');
+const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
+
+// Defining model
+const mongoose = require('mongoose');
+const Contact = mongoose.model('Contact', new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  phone: String,
+  tags: [String]
+}));
+mongoose.connect('mongodb://localhost/merest-sample');
+
+const app = express();
+// Creating the Express application to serve API
+const api = new merest.ModelAPIExpress({
+  title: 'Contact List API',
+  host: 'localhost:8000', // Assign correct host that could be accessed from your network
+  path: '/api/v1',
+  options: false // we do not need the OPTIONS any more
+});
+
+app.use(bodyParser.json()); // Parsing JSON-bodies
+app.use(methodOverride()); // Supporting HTTP OPTIONS and HTTP DELETE methods
+
+api.expose(Contact); // Exposing our API
+api.exposeSwaggerUi(); // Exposing swagger-ui
+
+app.use('/api/v1', api); // mounting API as usual sub-application
+
+app.listen(8000, () => {
+  console.log('Express server listening on port 8000');
+});</code></pre>
+
+
+<p>Going to <strong>swagger-ui</strong> in browser: <code>http://localhost:8000/swagger-ui</code>:</p>
+<img src="images/merest-swagger.gif">
+
+
       <br class="clear">
       <hr>
       <a href='installation.html'>Next (Installation) ></a>
@@ -114,13 +173,13 @@ app.listen(8000, function(){
 
 <h3><a href="cook-book.html">Cook-book</a></h3>
 
-<h3><a href="configuration.html">API Configuration</a></h3>
+<h3><a href="conf-levels.html">API Configuration</a></h3>
 <ul>
-  <li><a href="configuration.html#levels">Configuration levels</a></li>
-  <li><a href="configuration.html#app">API Application</a></li>
-  <li><a href="configuration.html#router">Router</a></li>
-  <li><a href="configuration.html#end-point">End-point</a></li>
-  <li><a href="configuration.html#methods">Model methods</a></li>
+  <li><a href="conf-levels.html">Configuration levels</a></li>
+  <li><a href="conf-app.html">API Application</a></li>
+  <li><a href="conf-router.html">Router</a></li>
+  <li><a href="conf-end-points.html">End-point</a></li>
+  <li><a href="conf-methods.html">Model methods</a></li>
 </ul>
 
 <h3><a href="end-points.html">API Requests and Responses</a></h3>

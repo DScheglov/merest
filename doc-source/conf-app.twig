@@ -1,0 +1,35 @@
+{% extends "includes/base-layout.twig" %}
+
+{% block title %}Configuration | Merest{% endblock %}
+{% block content %}
+<h1 class="page-title">API Configuration</h1>
+<section>
+    <article>
+      <a name='app'></a>
+      <h3>Setting up an API Application</h3>
+      <p>In order to configure API Application you should to pass the <code>options</options>
+        parameter to the <code>merest.ModelAPIExpress</code> contructor:
+      </p>
+<pre class="prettyprint source lang-javascript"><code>const api = new merest.ModelAPIExpress({
+  title: 'Merest-Sample API',
+  path: '/api/v1',
+  host: 'localhost:8000',
+  options: false,
+  transformResponse: &lt;function&gt;
+});</code></pre>
+  <p>Avaliable parameters are:</p>
+  <ul>
+    <li><strong>title</strong>: <code>String</code> - The title of api. &lt;<code>SWAGGER</code>&gt;</li>
+    <li><strong>path</strong>: <code>String</code> - The path of api root. The application doesn't mount it self on this path. &lt;<code>SWAGGER</code>&gt;</li>
+    <li><strong>host</strong>: <code>String</code> - The host to reach API. &lt;<code>SWAGGER</code>&gt;</li>
+    <li><strong>options</strong>: <code>Boolean</code> - allows or denies the OPTION end-point on the application level</li>
+    <li><strong>transformResponse</strong>: <code>Function</code> - the function to transform standard response. For details see <a href="end-points.html#transform-response">Transform response</a></li>
+  </ul>
+  <p>&lt;<code>SWAGGER</code>&gt; - the parameter is mandatory for correct <strong>swagger</strong> support</p>
+
+<br class="clear">
+<hr>
+<a href='installation.html'>Next (Installation) ></a>
+</article>
+</section>
+{% endblock %}
