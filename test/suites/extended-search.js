@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var request = require("request");
 var util = require('util');
 var assert = require('assert');
+var qs = require('querystring');
 
 var app = require('../setup/app');
 var db = require('../setup/db');
@@ -195,11 +196,14 @@ describe('Searching with __<oper>', function (done) {
 
   });
 
-  it("GET /api/v1/people?email__re=/.+?\\.(ru|ua)/i 200 -- get people with email ends ru or ua", function (done) {
+  it("GET /api/v1/people?email__re=/.+?\\.(RU|UA)/i 200 -- get people with email ends ru or ua", function (done) {
 
-    request.get({
-      url: util.format('%s/api/v1/people?email__re=/.+?\\.(ru|ua)/i', testUrl)
-    }, function (err, res, body) {
+    var url = util.format(
+      '%s/api/v1/people?%s',
+      testUrl,
+      qs.stringify({email__re: '/.+?\\.(RU|UA)/i'})
+    );
+    request.get({ url: url }, function (err, res, body) {
       assert.ok(!err);
       assert.equal(res.statusCode, 200);
       if (typeof(body) == "string") {
@@ -216,10 +220,12 @@ describe('Searching with __<oper>', function (done) {
   });
 
   it("GET /api/v1/people?email__re=/.+?\\.(RU|UA)/i&email__gte=t 200 -- get people with email ends ru or ua and starts with leter from t to z", function (done) {
-
-    request.get({
-      url: util.format('%s/api/v1/people?email__re=/.+?\\.(RU|UA)/i&email__gte=t', testUrl)
-    }, function (err, res, body) {
+    var url = util.format(
+      '%s/api/v1/people?%s&email__gte=t',
+      testUrl,
+      qs.stringify({email__re: '/.+?\\.(RU|UA)/i'})
+    );
+    request.get({ url: url }, function (err, res, body) {
       assert.ok(!err);
       assert.equal(res.statusCode, 200);
       if (typeof(body) == "string") {

@@ -13,3 +13,5 @@ require('./suites/exposition');
 require('./suites/transform-response');
 require('./suites/extended-search');
 require('./suites/cast-error-400');
+require('./suites/helpers');
+require('./suites/empty-api-options');

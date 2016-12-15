@@ -384,12 +384,14 @@ describe("Searching by POST-method", function (done) {
       }),
       function (next) {
         var modelAPI = new api.ModelAPIExpress();
-        modelAPI.expose(models.Person, {
+        var apiRouter = new api.ModelAPIRouter('Person', {
           search: {
             method: 'post',
             path: 'search'
           }
         });
+        assert.deepEqual(apiRouter.urls(), []);
+        apiRouter.attachTo(modelAPI);
         app.use('/api/v1/', modelAPI);
         app.listen(testPort, next);
       }

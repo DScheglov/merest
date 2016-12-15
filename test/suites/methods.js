@@ -765,3 +765,147 @@ describe("Exposing static methods implicitly", function (done) {
     });
   });
 });
+
+describe("Exposing new methods", function (done) {
+
+  before(function (done) {
+
+    async.waterfall([
+      app.init, db.init,
+      db.fixtures.bind(null, {
+        Person: '../fixtures/people'
+      }),
+      function (next) {
+        var modelAPI = new api.ModelAPIExpress();
+        modelAPI.expose(models.Person, {
+          exposeStatic: {
+            helloWorld: {
+              method: 'get',
+              exec: function(params, cb) {
+                cb(null, {message: 'Hello World!'})
+              }
+            }
+          }
+			  });
+        app.use('/api/v1/', modelAPI);
+        app.listen(testPort, next);
+      }
+    ], done);
+  });
+
+  after(function (done) {
+    async.waterfall([db.close, app.close], done)
+  });
+
+  it("OPTIONS /api/v1/people 200 -- should return urls for hello-world", function (done) {
+
+    request.post({
+      url: util.format('%s/api/v1/people', testUrl),
+      headers: {
+        "X-HTTP-Method-Override": "OPTIONS"
+      }
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
+      if (typeof(body) == "string") {
+        body = JSON.parse(body);
+      }
+      assert.equal(body.length, 7);
+      assert.ok(body.some(
+        o => o[1] === '/api/v1/people/hello-world'
+      ));
+      done();
+    });
+  });
+
+  it("GET /api/v1/people/hello-world 200 -- should return \"Hello world!\"", function (done) {
+
+    request.get({
+      url: util.format('%s/api/v1/people/hello-world', testUrl)
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
+      if (typeof(body) == "string") {
+        body = JSON.parse(body);
+      }
+      assert.ok(body.message);
+      assert.equal(body.message, 'Hello World!')
+
+      done();
+    });
+  });
+
+});
+
+
+describe("Exposing all methdos and the new one", function (done) {
+
+  before(function (done) {
+
+    async.waterfall([
+      app.init, db.init,
+      db.fixtures.bind(null, {
+        Person: '../fixtures/people'
+      }),
+      function (next) {
+        var modelAPI = new api.ModelAPIExpress();
+        modelAPI.expose(models.Person, {
+          exposeStatic: {
+            '*': true,
+            helloWorld: {
+              method: 'get',
+              exec: function(params, cb) {
+                cb(null, {message: 'Hello World!'})
+              }
+            }
+          }
+			  });
+        app.use('/api/v1/', modelAPI);
+        app.listen(testPort, next);
+      }
+    ], done);
+  });
+
+  after(function (done) {
+    async.waterfall([db.close, app.close], done)
+  });
+
+  it("OPTIONS /api/v1/people 200 -- should return urls for hello-world", function (done) {
+
+    request.post({
+      url: util.format('%s/api/v1/people', testUrl),
+      headers: {
+        "X-HTTP-Method-Override": "OPTIONS"
+      }
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
+      if (typeof(body) == "string") {
+        body = JSON.parse(body);
+      }
+      assert.equal(body.length, 8);
+      assert.ok(body.some(
+        o => o[1] === '/api/v1/people/hello-world'
+      ));
+      done();
+    });
+  });
+
+  it("GET /api/v1/people/hello-world 200 -- should return \"Hello world!\"", function (done) {
+
+    request.get({
+      url: util.format('%s/api/v1/people/hello-world', testUrl)
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
+      if (typeof(body) == "string") {
+        body = JSON.parse(body);
+      }
+      assert.ok(body.message);
+      assert.equal(body.message, 'Hello World!')
+
+      done();
+    });
+  });
+
+});

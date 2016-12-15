@@ -521,3 +521,52 @@ describe("Response transformation", function (done) {
   });
 
 });
+
+
+describe("Wrong value of transformResponse parameter", function (done) {
+
+  beforeEach(function (done) {
+
+    async.waterfall([
+      app.init, db.init,
+      db.fixtures.bind(null, {
+        Person: '../fixtures/people'
+      }),
+      function (next) {
+        var modelAPI = new api.ModelAPIExpress({
+          transformResponse: 'not a function'}
+        );
+        var apiRouter = new api.ModelAPIRouter(models.Person);
+        apiRouter.attachTo(modelAPI);
+        apiRouter.attachTo(modelAPI);
+        app.use('/api/v1/', modelAPI);
+        app.listen(testPort, next);
+      }
+    ], done);
+  });
+
+  afterEach(function (done) {
+    async.waterfall([db.close, app.close], done)
+  });
+
+
+  it("OPTIONS /api/v1 200 -- should respond without meta data", function (done) {
+    request.post({
+      url: util.format('%s/api/v1', testUrl),
+      headers: {
+        "X-HTTP-Method-Override": "OPTIONS"
+      }
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
+      if (typeof(body) == "string") {
+        body = JSON.parse(body);
+      }
+      assert.ok(!body.meta);
+      assert.equal(body.length, 7);
+      done();
+    });
+
+  });
+
+});

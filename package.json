@@ -1,14 +1,14 @@
 {
   "name": "merest",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Express based REST-full API for Mongoose models",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test-all": "NODE_ENV=test istanbul cover _mocha -- -R spec",
-    "test": "mocha test/suites/extended-search"
+    "test": "NODE_ENV=test istanbul cover _mocha -- -R spec",
+    "test-es": "mocha test/suites/extended-search"
   },
   "keywords": [
     "Mongoose",
