@@ -11,7 +11,7 @@ var models = require('../models');
 var api = require("../../lib");
 
 var testPort = 30023;
-var testUrl = 'http://localhost:' + testPort;
+var testUrl = 'http://127.0.0.1:' + testPort;
 
 describe("Restrictions for search by certain fields (HTTP POST)", function (done) {
 

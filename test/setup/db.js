@@ -15,7 +15,7 @@ module.exports = {
 function initialize(callback) {
   callback = arguments[arguments.length-1];
   var dbName = '_' + mongoose.Types.ObjectId();
-  mongoose.connect('mongodb://localhost/db'+dbName, callback)
+  mongoose.connect('mongodb://127.0.0.1/db'+dbName, callback)
 }
 
 function fixtures(data, callback) {
