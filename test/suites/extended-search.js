@@ -195,10 +195,10 @@ describe('Searching with __<oper>', function (done) {
 
   });
 
-  it("GET /api/v1/people?email__re=/.+?\\.(RU|UA)/i 200 -- get people with email ends ru or ua", function (done) {
+  it("GET /api/v1/people?email__re=/.+?\\.(ru|ua)/i 200 -- get people with email ends ru or ua", function (done) {
 
     request.get({
-      url: util.format('%s/api/v1/people?email__re=/.+?\\.(RU|UA)/i', testUrl)
+      url: util.format('%s/api/v1/people?email__re=/.+?\\.(ru|ua)/i', testUrl)
     }, function (err, res, body) {
       assert.ok(!err);
       assert.equal(res.statusCode, 200);
