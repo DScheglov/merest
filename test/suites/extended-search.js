@@ -185,9 +185,6 @@ describe('Searching with __<oper>', function (done) {
       url: util.format('%s/api/v1/books?year__lt=1900&year__gt=2000&year=1866', testUrl)
     }, function (err, res, body) {
       assert.ok(!err);
-      if (res.statusCode !== 200) {
-        console.log(body);
-      }
       assert.equal(res.statusCode, 200);
       if (typeof(body) == "string") {
         body = JSON.parse(body);
@@ -213,6 +210,23 @@ describe('Searching with __<oper>', function (done) {
         p => (p.email == 'a.s.pushkin@authors.ru') ||
              (p.email == 't.shevchenko@heroes.ua')
       ));
+      done();
+    });
+
+  });
+
+  it("GET /api/v1/people?email__re=/.+?\\.(RU|UA)/i&email__gte=t 200 -- get people with email ends ru or ua and starts with leter from t to z", function (done) {
+
+    request.get({
+      url: util.format('%s/api/v1/people?email__re=/.+?\\.(RU|UA)/i&email__gte=t', testUrl)
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
+      if (typeof(body) == "string") {
+        body = JSON.parse(body);
+      }
+      assert.equal(body.length, 1);
+      assert.ok(body[0].email === 't.shevchenko@heroes.ua');
       done();
     });
 
