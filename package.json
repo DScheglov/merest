@@ -7,8 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "NODE_ENV=test istanbul cover _mocha -- -R spec",
-    "test-es": "mocha test/suites/extended-search"
+    "test-local": "NODE_ENV=test istanbul cover _mocha -- -R spec",
+    "test": "./test.sh"
   },
   "keywords": [
     "Mongoose",
@@ -32,6 +32,7 @@
     "async": "^1.5.0",
     "body-parser": "^1.15.2",
     "colors": "^1.1.2",
+    "coveralls": "^2.11.15",
     "express": "^4.14.0",
     "istanbul": "^0.4.5",
     "method-override": "^2.3.7",
