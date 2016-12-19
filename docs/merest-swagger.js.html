@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: merest-swagger.js | Merest</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    <h1 class="page-title">Source: merest-swagger.js</h1>
+
+
+
+
+
+
+    <section>
+        <article>
+
+<pre class="prettyprint source linenums"><code>'use strict';
+var extendMongoose = require('mongoose-schema-jsonschema');
+var mongoose = extendMongoose(require('mongoose'));
+var serveStatic = require('serve-static');
+var _path = require('path');
+var cors = require('cors');
+
+var describeApi = require('./describe');
+
+/**
+ * swaggerDoc   builds Swagger document for the API
+ *
+ * @param  {Object} [options]   api description parameters (http://dscheglov.github.io/merest/ModelAPIExpress.html)
+ * @param  {String} [options.title]   the title of API
+ * @param  {String} [options.path]   the path of the API
+ * @param  {String} [options.version]   the API version
+ * @param  {String} [options.host]   the host name of the API
+ * @return {Object}           Swagger document
+ */
+function swaggerDoc(options) {
+  this.__swaggerDoc = this.__swaggerDoc || describeApi(this, options);
+  return this.__swaggerDoc;
+};
+
+
+/**
+ * exposeSwagger   exposes the swagger document. If document is not created
+ * the method forces model description;
+ *
+ * @param {String} [path='/swagger.json']   path to mount swagger document
+ * @param  {Object} [options]   options for swagger document exposition
+ * @param  {boolean} [options.cors=true]   should the swagger doc be exposed with CORS
+ * @param  {String} [options.beautify]    the separator for JSON beautifier
+ *
+ * @return {ModelAPIExpress}         the API object
+ */
+function exposeSwagger(path, options) {
+  if (typeof path !== 'string') {
+    options = path;
+    path = null;
+  }
+  path = path || '/swagger.json';
+  options = options || {};
+  var needCors = options.cors; delete options.cors;
+  var beautify = options.beautify; delete options.beautify;
+  beautify = beautify === true ? '  ' : beautify;
+  this.__swaggerDocURL = path;
+  this.__swaggerDocJSON = JSON.stringify(
+    this.swaggerDoc(options), null, beautify
+  );
+  if (needCors !== false) {
+    this.get(path, cors(), swaggerJSON.bind(this));
+  } else {
+    this.get(path, swaggerJSON.bind(this));
+  }
+  return this;
+}
+
+
+/**
+ * exposeSwaggerUi   exposes swagger ui application
+ *
+ * @param  {String} [path='/swagger-ui']   the path to mount swagger ui app
+ * @param  {Object} [options]  options to expose swagger ui
+ * @param  {String} [options.swaggerDoc='/swagger.json']  the path to mount swagger document
+ * @param  {boolean} [options.cors=true]   should the swagger doc be exposed with CORS
+ * @param  {String} [options.beautify]    the separator for JSON beautifier for swagger document
+ * @param  {String} [options.title]   the title of API
+ * @param  {String} [options.path]   the path of the API
+ * @param  {String} [options.version]   the API version
+ * @param  {String} [options.host]   the host name of the API
+ *
+ * @return {ModelAPIExpress}         the API object
+ */
+function exposeSwaggerUi(path, options) {
+  if (typeof path !== 'string') {
+    options = path;
+    path = null;
+  }
+  options = options || {};
+  var swaggerDoc = options.swaggerDoc;  delete options.swaggerDoc;
+
+  if (!this.__swaggerDocURL) {
+    this.exposeSwagger(swaggerDoc || '', options);
+  };
+
+  var uiPath = _path.join(__dirname, '../swagger-ui');
+  this.__swaggerUiStaticMiddleware = serveStatic(uiPath, {});
+
+  this.__swaggerUiPath = path || '/swagger-ui';
+  this.use(this.__swaggerUiPath, swaggerUi.bind(this));
+
+  return this;
+};
+
+
+function swaggerJSON(req, res, next) {
+  res.type('application/json');
+  res.send(this.__swaggerDocJSON);
+}
+
+
+
+function swaggerUi(req, res, next) {
+  if (req.path === '/') {
+    var swaggerApiDocsURL = _path.join(this.mountpath, this.__swaggerDocURL);
+    res.setHeader('Swagger-API-Docs-URL', swaggerApiDocsURL);
+  }
+
+  return this.__swaggerUiStaticMiddleware(req, res, next);
+}
+
+
+
+module.exports = exports = {
+  swaggerDoc: swaggerDoc,
+  exposeSwagger: exposeSwagger,
+  exposeSwaggerUi: exposeSwaggerUi
+};
+</code></pre>
+
+
+</article>
+</section>
+
+
+</div>
+
+<nav><h2>
+  <a href="index.html">merest</a>
+</h2>
+
+<h3><a href="installation.html">Installation</a></h3>
+<ul>
+  <li><a href="installation.html#prerequisites">Prerequisites</a></li>
+  <li><a href="installation.html#npm-install">npm installation</a></li>
+  <li><a href="installation.html#development">Development</a></li>
+</ul>
+
+<h3><a href="cook-book.html">Cook-book</a></h3>
+
+<h3><a href="conf-levels.html">API Configuration</a></h3>
+<ul>
+  <li><a href="conf-levels.html">Configuration levels</a></li>
+  <li><a href="conf-app.html">API Application</a></li>
+  <li><a href="conf-router.html">Router</a></li>
+  <li><a href="conf-end-points.html">End-point</a></li>
+  <li><a href="conf-methods.html">Model methods</a></li>
+</ul>
+
+<h3><a href="end-points.html">API Requests and Responses</a></h3>
+<ul>
+  <li><a href="end-points.html">Common reponses</a></li>
+  <li><a href="end-points.html#ep_options">Options</a></li>
+  <li><a href="end-points.html#ep_search">Search</a></li>
+  <li><a href="end-points.html#ep_create">Create</a></li>
+  <li><a href="end-points.html#ep_details">Details</a></li>
+  <li><a href="end-points.html#ep_update">Update</a></li>
+  <li><a href="end-points.html#ep_delete">Delete</a></li>
+  <li><a href="end-points.html#transform-response">Custom response</a></li>
+</ul>
+
+<h3><a href="swagger.html">Swagger support</a></h3>
+<ul>
+  <li><a href="swagger.html#install">Installation</a></li>
+  <li><a href="swagger.html#api-conf">Configure API</a></li>
+  <li><a href="swagger.html#document">Creating <code>swagger.json</code></a></li>
+  <li><a href="swagger.html#api-docs">Exposing the api-docs</a></li>
+  <li><a href="swagger.html#swagger-ui">Embedded swagger-ui</a></li>
+</ul>
+
+<h3>Specifications</h3>
+<ul>
+  <li><a href="ModelAPIExpress.html">ModelAPIExpress</a></li>
+  <li><a href="merest-swagger.html">Swagger-support methods</a></li>
+  <li><a href="ModelAPIRouter.html">ModelAPIRouter</a></li>
+  <li><a href="ModelAPIError.html">ModelAPIError</a></li>
+</ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated with <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

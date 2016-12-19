@@ -1,0 +1,1229 @@
+{% extends "includes/base-layout.twig" %}
+
+{% block title %}Class: ModelAPIExpress | Merest{% endblock %}
+{% block content %}
+    <h1 class="page-title">Class: ModelAPIExpress</h1>
+
+    <section>
+
+    <header>
+
+            <h2>merest-swagger</h2>
+
+                <div class="class-description">extention of ModelAPIExpress</div>
+
+
+    </header>
+
+    <article>
+      <div class="container-overview">
+
+
+
+
+
+
+  <dl class="details">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </dl>
+
+
+
+
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <h3 class="subsection-title">Methods</h3>
+
+
+
+
+
+
+      <h4 class="name" id="exposeSwagger"><span class="type-signature"></span>exposeSwagger<span class="signature">(path<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {ModelAPIExpress}</span></h4>
+
+
+
+
+
+  <div class="description">
+      exposeSwagger   exposes the swagger document. If document is not created
+the method forces model description;
+  </div>
+
+
+
+
+
+
+
+
+
+      <h5>Parameters:</h5>
+
+
+  <table class="params">
+      <thead>
+      <tr>
+
+          <th>Name</th>
+
+
+          <th>Type</th>
+
+
+          <th>Attributes</th>
+
+
+
+          <th>Default</th>
+
+
+          <th class="last">Description</th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+
+          <tr>
+
+                  <td class="name"><code>path</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">String</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+                  <td class="default">
+
+                      '/swagger.json'
+
+                  </td>
+
+
+              <td class="description last">path to mount swagger document</td>
+          </tr>
+
+
+
+          <tr>
+
+                  <td class="name"><code>options</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">Object</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+                  <td class="default">
+
+                  </td>
+
+
+              <td class="description last">options for swagger document exposition
+                  <h6>Properties</h6>
+
+
+  <table class="params">
+      <thead>
+      <tr>
+
+          <th>Name</th>
+
+
+          <th>Type</th>
+
+
+          <th>Attributes</th>
+
+
+
+          <th>Default</th>
+
+
+          <th class="last">Description</th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+
+          <tr>
+
+                  <td class="name"><code>cors</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">boolean</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+                  <td class="default">
+
+                      true
+
+                  </td>
+
+
+              <td class="description last">should the swagger doc be exposed with CORS</td>
+          </tr>
+
+
+
+          <tr>
+
+                  <td class="name"><code>beautify</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">String</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+                  <td class="default">
+
+                  </td>
+
+
+              <td class="description last">the separator for JSON beautifier</td>
+          </tr>
+
+
+      </tbody>
+  </table>
+
+              </td>
+          </tr>
+
+
+      </tbody>
+  </table>
+
+
+
+
+
+
+  <dl class="details">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <dt class="tag-source">Source:</dt>
+      <dd class="tag-source"><ul class="dummy"><li>
+          <a href="merest-swagger.js.html">merest-swagger.js</a>, <a href="merest-swagger.js.html#line37">line 37</a>
+      </li></ul></dd>
+
+
+
+
+
+
+
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h5>Returns:</h5>
+
+
+  <div class="param-desc">
+      the API object
+  </div>
+
+
+
+  <dl>
+      <dt>
+          Type
+      </dt>
+      <dd>
+
+  <span class="param-type">ModelAPIExpress</span>
+
+
+      </dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+      <h4 class="name" id="exposeSwaggerUi"><span class="type-signature"></span>exposeSwaggerUi<span class="signature">(path<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {ModelAPIExpress}</span></h4>
+
+
+
+
+
+  <div class="description">
+      exposeSwaggerUi   exposes swagger ui application
+  </div>
+
+
+
+
+
+
+
+
+
+      <h5>Parameters:</h5>
+
+
+  <table class="params">
+      <thead>
+      <tr>
+
+          <th>Name</th>
+
+
+          <th>Type</th>
+
+
+          <th>Attributes</th>
+
+
+
+          <th>Default</th>
+
+
+          <th class="last">Description</th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+
+          <tr>
+
+                  <td class="name"><code>path</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">String</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+                  <td class="default">
+
+                      '/swagger-ui'
+
+                  </td>
+
+
+              <td class="description last">the path to mount swagger ui app</td>
+          </tr>
+
+
+
+          <tr>
+
+                  <td class="name"><code>options</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">Object</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+                  <td class="default">
+
+                  </td>
+
+
+              <td class="description last">options to expose swagger ui
+                  <h6>Properties</h6>
+
+
+  <table class="params">
+      <thead>
+      <tr>
+
+          <th>Name</th>
+
+
+          <th>Type</th>
+
+
+          <th>Attributes</th>
+
+
+
+          <th>Default</th>
+
+
+          <th class="last">Description</th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+
+          <tr>
+
+                  <td class="name"><code>swaggerDoc</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">String</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+                  <td class="default">
+
+                      '/swagger.json'
+
+                  </td>
+
+
+              <td class="description last">the path to mount swagger document</td>
+          </tr>
+
+
+
+          <tr>
+
+                  <td class="name"><code>cors</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">boolean</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+                  <td class="default">
+
+                      true
+
+                  </td>
+
+
+              <td class="description last">should the swagger doc be exposed with CORS</td>
+          </tr>
+
+
+
+          <tr>
+
+                  <td class="name"><code>beautify</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">String</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+                  <td class="default">
+
+                  </td>
+
+
+              <td class="description last">the separator for JSON beautifier for swagger document</td>
+          </tr>
+
+
+
+          <tr>
+
+                  <td class="name"><code>title</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">String</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+                  <td class="default">
+
+                  </td>
+
+
+              <td class="description last">the title of API</td>
+          </tr>
+
+
+
+          <tr>
+
+                  <td class="name"><code>path</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">String</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+                  <td class="default">
+
+                  </td>
+
+
+              <td class="description last">the path of the API</td>
+          </tr>
+
+
+
+          <tr>
+
+                  <td class="name"><code>version</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">String</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+                  <td class="default">
+
+                  </td>
+
+
+              <td class="description last">the API version</td>
+          </tr>
+
+
+
+          <tr>
+
+                  <td class="name"><code>host</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">String</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+                  <td class="default">
+
+                  </td>
+
+
+              <td class="description last">the host name of the API</td>
+          </tr>
+
+
+      </tbody>
+  </table>
+
+              </td>
+          </tr>
+
+
+      </tbody>
+  </table>
+
+
+
+
+
+
+  <dl class="details">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <dt class="tag-source">Source:</dt>
+      <dd class="tag-source"><ul class="dummy"><li>
+          <a href="merest-swagger.js.html">merest-swagger.js</a>, <a href="merest-swagger.js.html#line75">line 75</a>
+      </li></ul></dd>
+
+
+
+
+
+
+
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h5>Returns:</h5>
+
+
+  <div class="param-desc">
+      the API object
+  </div>
+
+
+
+  <dl>
+      <dt>
+          Type
+      </dt>
+      <dd>
+
+  <span class="param-type">ModelAPIExpress</span>
+
+
+      </dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+      <h4 class="name" id="swaggerDoc"><span class="type-signature"></span>swaggerDoc<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+
+
+
+
+
+  <div class="description">
+      swaggerDoc   builds Swagger document for the API
+  </div>
+
+
+
+
+
+
+
+
+
+      <h5>Parameters:</h5>
+
+
+  <table class="params">
+      <thead>
+      <tr>
+
+          <th>Name</th>
+
+
+          <th>Type</th>
+
+
+          <th>Attributes</th>
+
+
+
+
+          <th class="last">Description</th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+
+          <tr>
+
+                  <td class="name"><code>options</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">Object</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+
+              <td class="description last">api description parameters (http://dscheglov.github.io/merest/ModelAPIExpress.html)
+                  <h6>Properties</h6>
+
+
+  <table class="params">
+      <thead>
+      <tr>
+
+          <th>Name</th>
+
+
+          <th>Type</th>
+
+
+          <th>Attributes</th>
+
+
+
+
+          <th class="last">Description</th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+
+          <tr>
+
+                  <td class="name"><code>title</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">String</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+
+              <td class="description last">the title of API</td>
+          </tr>
+
+
+
+          <tr>
+
+                  <td class="name"><code>path</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">String</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+
+              <td class="description last">the path of the API</td>
+          </tr>
+
+
+
+          <tr>
+
+                  <td class="name"><code>version</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">String</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+
+              <td class="description last">the API version</td>
+          </tr>
+
+
+
+          <tr>
+
+                  <td class="name"><code>host</code></td>
+
+
+              <td class="type">
+
+
+  <span class="param-type">String</span>
+
+
+
+              </td>
+
+
+                  <td class="attributes">
+
+                      &lt;optional><br>
+
+
+
+
+
+                  </td>
+
+
+
+
+              <td class="description last">the host name of the API</td>
+          </tr>
+
+
+      </tbody>
+  </table>
+
+              </td>
+          </tr>
+
+
+      </tbody>
+  </table>
+
+
+
+
+
+
+  <dl class="details">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <dt class="tag-source">Source:</dt>
+      <dd class="tag-source"><ul class="dummy"><li>
+          <a href="merest-swagger.js.html">merest-swagger.js</a>, <a href="merest-swagger.js.html#line20">line 20</a>
+      </li></ul></dd>
+
+
+
+
+
+
+
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h5>Returns:</h5>
+
+
+  <div class="param-desc">
+      Swagger document
+  </div>
+
+
+
+  <dl>
+      <dt>
+          Type
+      </dt>
+      <dd>
+
+  <span class="param-type">Object</span>
+
+
+      </dd>
+  </dl>
+
+</article>
+
+</section>
+
+
+
+
+{% endblock %}

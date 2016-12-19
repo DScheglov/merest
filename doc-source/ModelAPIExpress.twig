@@ -21,15 +21,15 @@
     </header>
 
     <article>
-        <div class="container-overview">
+      <div class="container-overview">
 
 
 
 
-        <h2>Constructor</h2>
+      <h2>Constructor</h2>
 
 
-        <h4 class="name" id="ModelAPIExpress"><span class="type-signature"></span>new ModelAPIExpress<span class="signature">(options)</span><span class="type-signature"> &rarr; {<a href="ModelAPIExpress.html">ModelAPIExpress</a>}</span></h4>
+      <h4 class="name" id="ModelAPIExpress"><span class="type-signature"></span>new ModelAPIExpress<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="ModelAPIExpress.html">ModelAPIExpress</a>}</span></h4>
 
 
 
@@ -43,285 +43,293 @@
 
 
 
-        <h5>Parameters:</h5>
+      <h5>Parameters:</h5>
 
 
-    <table class="params">
-        <thead>
-        <tr>
+  <table class="params">
+      <thead>
+      <tr>
 
-            <th>Name</th>
+          <th>Name</th>
 
 
-            <th>Type</th>
+          <th>Type</th>
 
 
+          <th>Attributes</th>
 
 
 
-            <th class="last">Description</th>
-        </tr>
-        </thead>
 
-        <tbody>
+          <th class="last">Description</th>
+      </tr>
+      </thead>
 
+      <tbody>
 
-            <tr>
 
-                    <td class="name"><code>options</code></td>
+          <tr>
 
+                  <td class="name"><code>options</code></td>
 
-                <td class="type">
 
+              <td class="type">
 
-    <span class="param-type">Object</span>
 
+  <span class="param-type">Object</span>
 
 
-                </td>
 
+              </td>
 
 
+                  <td class="attributes">
 
+                      &lt;optional><br>
 
-                <td class="description last">optional, object with options
-                    <h6>Properties</h6>
 
 
-    <table class="params">
-        <thead>
-        <tr>
 
-            <th>Name</th>
 
+                  </td>
 
-            <th>Type</th>
 
 
-            <th>Attributes</th>
 
+              <td class="description last">API configuration parameters
+                  <h6>Properties</h6>
 
 
+  <table class="params">
+      <thead>
+      <tr>
 
-            <th class="last">Description</th>
-        </tr>
-        </thead>
+          <th>Name</th>
 
-        <tbody>
 
+          <th>Type</th>
 
-            <tr>
 
-                    <td class="name"><code>title</code></td>
+          <th>Attributes</th>
 
 
-                <td class="type">
 
 
-    <span class="param-type">String</span>
+          <th class="last">Description</th>
+      </tr>
+      </thead>
 
+      <tbody>
 
 
-                </td>
+          <tr>
 
+                  <td class="name"><code>title</code></td>
 
-                    <td class="attributes">
 
+              <td class="type">
 
 
+  <span class="param-type">String</span>
 
 
-                    </td>
 
+              </td>
 
 
+                  <td class="attributes">
 
-                <td class="description last">the title of API <SWAGGER></td>
-            </tr>
 
 
 
-            <tr>
 
-                    <td class="name"><code>path</code></td>
+                  </td>
 
 
-                <td class="type">
 
 
-    <span class="param-type">String</span>
+              <td class="description last">the title of API <SWAGGER></td>
+          </tr>
 
 
 
-                </td>
+          <tr>
 
+                  <td class="name"><code>version</code></td>
 
-                    <td class="attributes">
 
+              <td class="type">
 
 
+  <span class="param-type">String</span>
 
 
-                    </td>
 
+              </td>
 
 
+                  <td class="attributes">
 
-                <td class="description last">The path of api root. The application doesn't mount it self on this path. <SWAGGER></td>
-            </tr>
 
 
 
-            <tr>
 
-                    <td class="name"><code>host</code></td>
+                  </td>
 
 
-                <td class="type">
 
 
-    <span class="param-type">String</span>
+              <td class="description last">the version of API <SWAGGER></td>
+          </tr>
 
 
 
-                </td>
+          <tr>
 
+                  <td class="name"><code>path</code></td>
 
-                    <td class="attributes">
 
+              <td class="type">
 
 
+  <span class="param-type">String</span>
 
 
-                    </td>
 
+              </td>
 
 
+                  <td class="attributes">
 
-                <td class="description last">The host to reach API. <SWAGGER></td>
-            </tr>
 
 
 
-            <tr>
 
-                    <td class="name"><code>options</code></td>
+                  </td>
 
 
-                <td class="type">
 
 
-    <span class="param-type">Boolean</span>
+              <td class="description last">the path of api root. The application doesn't mount it self on this path. <SWAGGER></td>
+          </tr>
 
 
 
-                </td>
+          <tr>
 
+                  <td class="name"><code>host</code></td>
 
-                    <td class="attributes">
 
-                        &lt;optional><br>
+              <td class="type">
 
 
+  <span class="param-type">String</span>
 
 
 
-                    </td>
+              </td>
 
 
+                  <td class="attributes">
 
 
-                <td class="description last">allows or denies the OPTION end-point on the application level</td>
-            </tr>
 
 
 
-            <tr>
+                  </td>
 
-                    <td class="name"><code>transformResponse</code></td>
 
 
-                <td class="type">
 
+              <td class="description last">the host to reach API. <SWAGGER></td>
+          </tr>
 
-    <span class="param-type">function</span>
 
 
+          <tr>
 
-                </td>
+                  <td class="name"><code>options</code></td>
 
 
-                    <td class="attributes">
+              <td class="type">
 
-                        &lt;optional><br>
 
+  <span class="param-type">Boolean</span>
 
 
 
+              </td>
 
-                    </td>
 
+                  <td class="attributes">
 
+                      &lt;optional><br>
 
 
-                <td class="description last">the function to transform standard response. For details see Transform response</td>
-            </tr>
 
 
-        </tbody>
-    </table>
 
-                </td>
-            </tr>
+                  </td>
 
 
-        </tbody>
-    </table>
 
 
+              <td class="description last">allows or denies the OPTION end-point on the application level</td>
+          </tr>
 
 
 
+          <tr>
 
-    <dl class="details">
+                  <td class="name"><code>transformResponse</code></td>
 
 
+              <td class="type">
 
 
+  <span class="param-type">function</span>
 
 
 
+              </td>
 
 
+                  <td class="attributes">
 
+                      &lt;optional><br>
 
 
 
 
 
+                  </td>
 
 
 
 
+              <td class="description last">the function to transform standard response. For details see Transform response</td>
+          </tr>
 
 
+      </tbody>
+  </table>
 
+              </td>
+          </tr>
 
 
+      </tbody>
+  </table>
 
 
-        <dt class="tag-source">Source:</dt>
-        <dd class="tag-source"><ul class="dummy"><li>
-            <a href="model-api-app.js.html">model-api-app.js</a>, <a href="model-api-app.js.html#line25">line 25</a>
-        </li></ul></dd>
 
 
 
 
+  <dl class="details">
 
 
 
-    </dl>
 
 
 
@@ -335,36 +343,28 @@
 
 
 
-    <h5>Returns:</h5>
 
 
-    <div class="param-desc">
-        Created API application
-    </div>
 
 
 
-    <dl>
-        <dt>
-            Type
-        </dt>
-        <dd>
 
-    <span class="param-type"><a href="ModelAPIExpress.html">ModelAPIExpress</a></span>
 
 
-        </dd>
-    </dl>
 
 
+      <dt class="tag-source">Source:</dt>
+      <dd class="tag-source"><ul class="dummy"><li>
+          <a href="model-api-app.js.html">model-api-app.js</a>, <a href="model-api-app.js.html#line26">line 26</a>
+      </li></ul></dd>
 
 
 
 
-        </div>
 
 
 
+  </dl>
 
 
 
@@ -374,30 +374,37 @@
 
 
 
-            <h3 class="subsection-title">Members</h3>
 
 
 
-    <h4 class="name" id="SWAGGER_SUPPORT"><span class="type-signature"></span>SWAGGER_SUPPORT<span class="type-signature"></span></h4>
 
+  <h5>Returns:</h5>
 
 
+  <div class="param-desc">
+      Created API application
+  </div>
 
-    <div class="description">
-        SWAGGER_SUPPORT indicates that the module version supports the swagger
-    </div>
 
 
+  <dl>
+      <dt>
+          Type
+      </dt>
+      <dd>
 
+  <span class="param-type"><a href="ModelAPIExpress.html">ModelAPIExpress</a></span>
 
 
+      </dd>
+  </dl>
 
 
-    <dl class="details">
 
 
 
 
+      </div>
 
 
 
@@ -410,28 +417,29 @@
 
 
 
+          <h3 class="subsection-title">Members</h3>
 
 
 
+  <h4 class="name" id="SWAGGER_SUPPORT"><span class="type-signature"></span>SWAGGER_SUPPORT<span class="type-signature"></span></h4>
 
 
 
 
+  <div class="description">
+      SWAGGER_SUPPORT indicates that the module version supports the swagger
+  </div>
 
 
 
-        <dt class="tag-source">Source:</dt>
-        <dd class="tag-source"><ul class="dummy"><li>
-            <a href="model-api-app.js.html">model-api-app.js</a>, <a href="model-api-app.js.html#line62">line 62</a>
-        </li></ul></dd>
 
 
 
 
+  <dl class="details">
 
 
 
-    </dl>
 
 
 
@@ -442,24 +450,23 @@
 
 
 
-            <h3 class="subsection-title">Methods</h3>
 
 
 
 
 
 
-        <h4 class="name" id="expose"><span class="type-signature"></span>expose<span class="signature">(path<span class="signature-attributes">opt</span>, middleware<span class="signature-attributes">opt</span>, model, routerOptions<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="ModelAPIExpress.html">ModelAPIExpress</a>}</span></h4>
 
 
 
 
 
-    <div class="description">
-        ModelAPIExpress.prototype.expose - exposes the mongoose model as RESTFull json service
-    </div>
 
 
+      <dt class="tag-source">Source:</dt>
+      <dd class="tag-source"><ul class="dummy"><li>
+          <a href="model-api-app.js.html">model-api-app.js</a>, <a href="model-api-app.js.html#line63">line 63</a>
+      </li></ul></dd>
 
 
 
@@ -467,207 +474,208 @@
 
 
 
-        <h5>Parameters:</h5>
+  </dl>
 
 
-    <table class="params">
-        <thead>
-        <tr>
 
-            <th>Name</th>
 
 
-            <th>Type</th>
 
 
-            <th>Attributes</th>
 
 
 
+          <h3 class="subsection-title">Methods</h3>
 
-            <th class="last">Description</th>
-        </tr>
-        </thead>
 
-        <tbody>
 
 
-            <tr>
 
-                    <td class="name"><code>path</code></td>
 
+      <h4 class="name" id="expose"><span class="type-signature"></span>expose<span class="signature">(path<span class="signature-attributes">opt</span>, middleware<span class="signature-attributes">opt</span>, model, routerOptions<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="ModelAPIExpress.html">ModelAPIExpress</a>}</span></h4>
 
-                <td class="type">
 
 
-    <span class="param-type">String</span>
 
 
+  <div class="description">
+      ModelAPIExpress.prototype.expose - exposes the mongoose model as RESTFull json service
+  </div>
 
-                </td>
 
 
-                    <td class="attributes">
 
-                        &lt;optional><br>
 
 
 
 
 
-                    </td>
+      <h5>Parameters:</h5>
 
 
+  <table class="params">
+      <thead>
+      <tr>
 
+          <th>Name</th>
 
-                <td class="description last">the path to mount exposed model</td>
-            </tr>
 
+          <th>Type</th>
 
 
-            <tr>
+          <th>Attributes</th>
 
-                    <td class="name"><code>middleware</code></td>
 
 
-                <td class="type">
 
+          <th class="last">Description</th>
+      </tr>
+      </thead>
 
-    <span class="param-type">function</span>
+      <tbody>
 
 
+          <tr>
 
-                </td>
+                  <td class="name"><code>path</code></td>
 
 
-                    <td class="attributes">
+              <td class="type">
 
-                        &lt;optional><br>
 
+  <span class="param-type">String</span>
 
 
 
+              </td>
 
-                    </td>
 
+                  <td class="attributes">
 
+                      &lt;optional><br>
 
 
-                <td class="description last">one or more middlewares that should be called before each end-point controller</td>
-            </tr>
 
 
 
-            <tr>
+                  </td>
 
-                    <td class="name"><code>model</code></td>
 
 
-                <td class="type">
 
+              <td class="description last">the path to mount exposed model</td>
+          </tr>
 
-    <span class="param-type">Mongoose.Model</span>
 
 
+          <tr>
 
-                </td>
+                  <td class="name"><code>middleware</code></td>
 
 
-                    <td class="attributes">
+              <td class="type">
 
 
+  <span class="param-type">function</span>
 
 
 
-                    </td>
+              </td>
 
 
+                  <td class="attributes">
 
+                      &lt;optional><br>
 
-                <td class="description last">Mongoosee model to be exposed</td>
-            </tr>
 
 
 
-            <tr>
 
-                    <td class="name"><code>routerOptions</code></td>
+                  </td>
 
 
-                <td class="type">
 
 
-    <span class="param-type">Object</span>
+              <td class="description last">one or more middlewares that should be called before each end-point controller</td>
+          </tr>
 
 
 
-                </td>
+          <tr>
 
+                  <td class="name"><code>model</code></td>
 
-                    <td class="attributes">
 
-                        &lt;optional><br>
+              <td class="type">
 
 
+  <span class="param-type">Mongoose.Model</span>
 
 
 
-                    </td>
+              </td>
 
 
+                  <td class="attributes">
 
 
-                <td class="description last">ModelAPIRouter configuration object (see [Router configuration](configuration.html#router))</td>
-            </tr>
 
 
-        </tbody>
-    </table>
 
+                  </td>
 
 
 
 
+              <td class="description last">Mongoosee model to be exposed</td>
+          </tr>
 
-    <dl class="details">
 
 
+          <tr>
 
+                  <td class="name"><code>routerOptions</code></td>
 
 
+              <td class="type">
 
 
+  <span class="param-type">Object</span>
 
 
 
+              </td>
 
 
+                  <td class="attributes">
 
+                      &lt;optional><br>
 
 
 
 
 
+                  </td>
 
 
 
 
+              <td class="description last">ModelAPIRouter configuration object (see [Router configuration](configuration.html#router))</td>
+          </tr>
 
 
+      </tbody>
+  </table>
 
 
-        <dt class="tag-source">Source:</dt>
-        <dd class="tag-source"><ul class="dummy"><li>
-            <a href="model-api-app.js.html">model-api-app.js</a>, <a href="model-api-app.js.html#line73">line 73</a>
-        </li></ul></dd>
 
 
 
 
+  <dl class="details">
 
 
 
-    </dl>
 
 
 
@@ -681,28 +689,20 @@
 
 
 
-    <h5>Returns:</h5>
 
 
-    <div class="param-desc">
-        itself
-    </div>
 
 
 
-    <dl>
-        <dt>
-            Type
-        </dt>
-        <dd>
 
-    <span class="param-type"><a href="ModelAPIExpress.html">ModelAPIExpress</a></span>
 
 
-        </dd>
-    </dl>
 
 
+      <dt class="tag-source">Source:</dt>
+      <dd class="tag-source"><ul class="dummy"><li>
+          <a href="model-api-app.js.html">model-api-app.js</a>, <a href="model-api-app.js.html#line74">line 74</a>
+      </li></ul></dd>
 
 
 
@@ -710,16 +710,13 @@
 
 
 
+  </dl>
 
-        <h4 class="name" id="urls"><span class="type-signature"></span>urls<span class="signature">()</span><span class="type-signature"> &rarr; {Array}</span></h4>
 
 
 
 
 
-    <div class="description">
-        ModelAPIExpress.prototype.urls - returns avaliable list of end-points
-    </div>
 
 
 
@@ -727,15 +724,26 @@
 
 
 
+  <h5>Returns:</h5>
 
 
+  <div class="param-desc">
+      itself
+  </div>
 
 
 
+  <dl>
+      <dt>
+          Type
+      </dt>
+      <dd>
 
-    <dl class="details">
+  <span class="param-type"><a href="ModelAPIExpress.html">ModelAPIExpress</a></span>
 
 
+      </dd>
+  </dl>
 
 
 
@@ -746,11 +754,15 @@
 
 
 
+      <h4 class="name" id="urls"><span class="type-signature"></span>urls<span class="signature">()</span><span class="type-signature"> &rarr; {Array}</span></h4>
 
 
 
 
 
+  <div class="description">
+      ModelAPIExpress.prototype.urls - returns avaliable list of end-points
+  </div>
 
 
 
@@ -760,18 +772,14 @@
 
 
 
-        <dt class="tag-source">Source:</dt>
-        <dd class="tag-source"><ul class="dummy"><li>
-            <a href="model-api-app.js.html">model-api-app.js</a>, <a href="model-api-app.js.html#line117">line 117</a>
-        </li></ul></dd>
 
 
 
 
+  <dl class="details">
 
 
 
-    </dl>
 
 
 
@@ -785,28 +793,20 @@
 
 
 
-    <h5>Returns:</h5>
 
 
-    <div class="param-desc">
-        list of end-points
-    </div>
 
 
 
-    <dl>
-        <dt>
-            Type
-        </dt>
-        <dd>
 
-    <span class="param-type">Array</span>
 
 
-        </dd>
-    </dl>
 
 
+      <dt class="tag-source">Source:</dt>
+      <dd class="tag-source"><ul class="dummy"><li>
+          <a href="model-api-app.js.html">model-api-app.js</a>, <a href="model-api-app.js.html#line117">line 117</a>
+      </li></ul></dd>
 
 
 
@@ -814,9 +814,51 @@
 
 
 
+  </dl>
 
 
-    </article>
+
+
+
+
+
+
+
+
+
+
+
+  <h5>Returns:</h5>
+
+
+  <div class="param-desc">
+      list of end-points
+  </div>
+
+
+
+  <dl>
+      <dt>
+          Type
+      </dt>
+      <dd>
+
+  <span class="param-type">Array</span>
+
+
+      </dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+          </article>
 
     </section>
 

@@ -27,10 +27,11 @@ var readMiddlwares = require('./helpers').readMiddlwares;
 /**
  * @class ModelAPIExpress - Express application that provides an RESTfull API for different models
  *
- * @param  {Object} options          optional, object with options
+ * @param  {Object} [options]         API configuration parameters
  * @param  {String} options.title    the title of API &lt;SWAGGER>
- * @param  {String} options.path     The path of api root. The application doesn't mount it self on this path. &lt;SWAGGER>
- * @param  {String} options.host     The host to reach API. &lt;SWAGGER>
+ * @param  {String} options.version  the version of API &lt;SWAGGER>
+ * @param  {String} options.path     the path of api root. The application doesn't mount it self on this path. &lt;SWAGGER>
+ * @param  {String} options.host     the host to reach API. &lt;SWAGGER>
  * @param  {Boolean} [options.options]  allows or denies the OPTION end-point on the application level
  * @param  {Function} [options.transformResponse] the function to transform standard response. For details see Transform response
  * @return {ModelAPIExpress}         Created API application
@@ -100,7 +101,6 @@ ModelAPIExpress.prototype.expose = function(path, middleware, model, routerOptio
   if (ml) { options.middlewares = middlewares }
 
   var router = new ModelAPIRouter(model, options);
-  this.__attachOptions();
   router.attachTo(this);
   return this;
 };
@@ -129,7 +129,7 @@ ModelAPIExpress.prototype.__attachOptions = function() {
  */
 ModelAPIExpress.prototype.urls = function() {
   if (this._urlsDefined) return this._urls;
-  if (!this.mountpath) return [];
+
   if (!this.__routers || !this.__routers.length) return [];
 
   this._urlsDefined = true;
@@ -152,7 +152,6 @@ ModelAPIExpress.prototype.urls = function() {
 ModelAPIExpress.prototype.__addModelAPIrouter = function(router) {
 
   this.__routers = this.__routers || [];
-  if (this.__routers.indexOf(router) >= 0) return this;
   this.__routers.push(router);
 }
 
@@ -160,6 +159,7 @@ ModelAPIExpress.prototype.__addModelAPIrouter = function(router) {
  * @private
  */
 ModelAPIExpress.prototype.__finalize = function() {
+  this.__attachOptions();
   this.use(controllers.notSupported);
   this.use(controllers.error);
   this.urls();

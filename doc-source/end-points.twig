@@ -83,8 +83,23 @@ Content-Type: application/json; charset=utf-8
 <h3>End-point <code>search</code>:</h3><p>Returns the list of Documents that satisfy query passed to call.</p>
 <p>Request for end-point mounted on <code>GET</code>:</p>
 <pre class="prettyprint source lang-shell"><code>GET /end-point-path/[?field1=value1&field2=value2&_sort=fieldName&_limit=number&_skip=number] HTTP/1.1
-HOST: hostname:port</code></pre><p>Query String could contain pares field=value separated by the <code>&amp;</code>
-and three additional parameters:</p>
+HOST: hostname:port</code></pre>
+
+<p>Query String could contain pares field=value separated by the <code>&amp;</code>.
+  Since the <strong>merest</merest> v. 1.2.0 the extended search opportunties is avaliable:
+<ul>
+  <li>field<strong>__ne</strong>=value - the field is not equal to the value</li>
+  <li>field<strong>__in</string>=value,value,value - the field is one of the list of values (separated by coma)</li>
+  <li>field<strong>__nin</string>=value,value,value - the field is not in the list of values (separated by coma)</li>
+  <li>field<strong>__gt</strong>=value - the field is greater then the value</li>
+  <li>field<strong>__gte</strong>=value - the field is greater then or equal to the value</li>
+  <li>field<strong>__lt</strong>=value - the field is less then the value</li>
+  <li>field<strong>__lte</strong>=value - the field is less then or equal to the value</li>
+  <li>field<strong>__re</strong>=reg-exp - the field matches the pattern</li>
+  <li>field<strong>__ex</strong>=flag - the field exists (if flag is 1, true etc.) or doesn't exists (if flag is 0 or false)</li>
+
+</ul>
+<p>Also query string could contain three additional parameters:</p>
 <ul>
 <li>_sort=fieldName</li>
 <li>_limit=maximum number of documents in Response</li>
@@ -208,20 +223,19 @@ Content-Type: application/json; charset=utf-8
 function that transforms prepared response and specify this function in api configuration</p>
 <p><strong>Example</strong>:</p>
 <pre class="prettyprint source lang-javascript"><code>// api.js
-
 var api = new merest.ModelAPIExpress({
-transformResponse: prepareResponse
+  transformResponse: prepareResponse
 });
 
 ...
 
 function prepareResponse(req, res) {
-var body = {
-status: this.status,
-data: this.body
-};
-this.status = 200;
-this.body = body;
+  var body = {
+    status: this.status,
+    data: this.body
+  };
+  this.status = 200;
+  this.body = body;
 }</code></pre><p>You could access the following fields inside a transforming function:</p>
 <ul>
 <li><code>this.status</code> -- the HTTP Status</li>

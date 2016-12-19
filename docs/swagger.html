@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Merest</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+<h1 class="page-title">merest-swagger</h1>
+
+<section>
+    <article>
+      <section>
+            <article><p>
+    The <strong>merest-swagger</strong> is an extention of the <strong>merest</strong> that adds
+    three methods to <code>merest.ModelAPIExpress</code> to provide <strong>swagger</strong> api documentation
+    support:
+    <ul>
+      <li><code>swaggerDoc()</code> - it returns javascript object that contains full api description in <strong>swagger</strong> format</li>
+      <li><code>exposeSwagger()</code> - the method makes the swagger document is accessible by url</li>
+      <li><code>exposeSwaggerUi()</code> - this method allows you to embed the <a href="https://github.com/swagger-api/swagger-ui" alt="swagger-ui guthub repo">swagger-ui</a> into your project</li>
+    </ul>
+
+    <p>Currently only the <strong>swagger 2.0</strong> is supported</p>
+
+
+    <h3>Example</h3>
+<pre class="prettyprint source lang-javascript"><code>'use strict';
+
+const merest = require('merest-swagger'); // to support SwaggerUI
+const express = require('express');
+const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
+
+// Defining model
+const mongoose = require('mongoose');
+const Contact = mongoose.model('Contact', new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  phone: String,
+  tags: [String]
+}));
+mongoose.connect('mongodb://localhost/merest-sample');
+
+const app = express();
+// Creating the Express application to serve API
+const api = new merest.ModelAPIExpress({
+  title: 'Contact List API',
+  host: 'localhost:8000', // Assign correct host that could be accessed from your network
+  path: '/api/v1',
+  options: false // we do not need the OPTIONS any more
+});
+
+app.use(bodyParser.json()); // Parsing JSON-bodies
+app.use(methodOverride()); // Supporting HTTP OPTIONS and HTTP DELETE methods
+
+api.expose(Contact); // Exposing our API
+
+let swaggerDoc = api.swagerDoc(); // creating a swagger document
+api.exposeSwagger('/api-docs', { // mounting the swagger document to the api with path /api-docs
+  beautify: true
+});
+api.exposeSwaggerUi('/api-ui'); // mounting the swagger-ui to the api with path /api-ui
+
+app.use('/api/v1', api); // mounting API as usual sub-application
+
+app.listen(8000, () => {
+  console.log('Express server listening on port 8000');
+});</code></pre>
+
+    <p>Going to <strong>swagger-ui</strong> in browser: <code>http://localhost:8000/api-ui/</code></p>
+    <p><img src="images/merest-swagger-api-docs.gif" alt="swagger-ui"></p>
+    <p>You could copy the path of swagger document <code>http://localhost:8000/api-docs/</code> and paste it
+       to the adress line of your browser:</p>
+<pre class="prettyprint lang-json" style="height: 500px; overflow: auto; width: 100%"><code>{
+  "swagger": "2.0",
+  "info": {
+    "title": "Contact List API",
+    "version": "1.0"
+  },
+  "host": "localhost:8000",
+  "basePath": "/api/v1",
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "tags": [
+    {
+      "name": "_meta",
+      "description": "API description"
+    },
+    {
+      "name": "Contact",
+      "description": "Methods to manage Contact"
+    }
+  ],
+  "responses": {
+    "405": {
+      "description": "The end-point is not supported",
+      "schema": {
+        "$ref": "#/definitions/modelAPIError_E4xx"
+      }
+    },
+    "422": {
+      "description": "Entity validation failed",
+      "schema": {
+        "$ref": "#/definitions/modelAPIError_E422"
+      }
+    },
+    "500": {
+      "description": "Internal API error",
+      "schema": {
+        "$ref": "#/definitions/modelAPIError_E500"
+      }
+    }
+  },
+  "paths": {
+    "/contacts/": {
+      "get": {
+        "tags": [
+          "Contact"
+        ],
+        "operationId": "searchFor_contacts",
+        "summary": "Search for contacts",
+        "description": "List/Search all contacts",
+        "parameters": [
+          {
+            "name": "_sort",
+            "in": "query",
+            "type": "string",
+            "description": "The list of fields to order by: [-]field[,[-]field]"
+          },
+          {
+            "name": "_limit",
+            "in": "query",
+            "type": "integer",
+            "description": "The maximum number of documents in the response"
+          },
+          {
+            "name": "_skip",
+            "in": "query",
+            "type": "integer",
+            "description": "Number of documents should be skipped in the selection before responding"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "_id",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "__v",
+            "in": "query",
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully searched",
+            "schema": {
+              "title": "List of contacts",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Contact_Response"
+              }
+            }
+          },
+          "405": {
+            "$ref": "#/responses/405"
+          },
+          "500": {
+            "$ref": "#/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Contact"
+        ],
+        "operationId": "create_Contact",
+        "summary": "Create Contact",
+        "description": "Create a new Contact",
+        "parameters": [
+          {
+            "name": "Contact",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Contact"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully created",
+            "schema": {
+              "$ref": "#/definitions/Contact_Response"
+            }
+          },
+          "405": {
+            "$ref": "#/responses/405"
+          },
+          "406": {
+            "description": "Wrong method usage (use `post ~/:id` to update an object)",
+            "schema": {
+              "$ref": "#/definitions/modelAPIError_E4xx"
+            }
+          },
+          "422": {
+            "$ref": "#/responses/422"
+          },
+          "500": {
+            "$ref": "#/responses/500"
+          }
+        }
+      }
+    },
+    "/contacts/{id}": {
+      "get": {
+        "tags": [
+          "Contact"
+        ],
+        "operationId": "detailsOf_Contact",
+        "summary": "Details of Contact",
+        "description": "Find a Contact by Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "pattern": "[a-f\\d]{24}",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The Contact was found successfully.",
+            "schema": {
+              "$ref": "#/definitions/Contact_Response"
+            }
+          },
+          "404": {
+            "description": "Contact is not found by specified id",
+            "schema": {
+              "$ref": "#/definitions/modelAPIError_E4xx"
+            }
+          },
+          "405": {
+            "$ref": "#/responses/405"
+          },
+          "500": {
+            "$ref": "#/responses/500"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Contact"
+        ],
+        "operationId": "update_Contact",
+        "summary": "Update Contact",
+        "description": "Find a Contact by Id and update it (particulary)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "Contact",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Contact_Update"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated",
+            "schema": {
+              "$ref": "#/definitions/Contact_Response"
+            }
+          },
+          "404": {
+            "description": "Contact is not found by specified id",
+            "schema": {
+              "$ref": "#/definitions/modelAPIError_E4xx"
+            }
+          },
+          "405": {
+            "$ref": "#/responses/405"
+          },
+          "422": {
+            "$ref": "#/responses/422"
+          },
+          "500": {
+            "$ref": "#/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Contact"
+        ],
+        "operationId": "delete_Contact",
+        "summary": "Delete Contact",
+        "description": "Find a Contact by Id and delete it.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted",
+            "schema": {
+              "$ref": "#/definitions/deleteResponse"
+            }
+          },
+          "404": {
+            "description": "Contact is not found by specified id",
+            "schema": {
+              "$ref": "#/definitions/modelAPIError_E4xx"
+            }
+          },
+          "405": {
+            "$ref": "#/responses/405"
+          },
+          "500": {
+            "$ref": "#/responses/500"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "modelAPIError_E4xx": {
+      "title": "ModelAPIError",
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "boolean"
+        },
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "modelAPIError_E422": {
+      "title": "EntityValidationError",
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "boolean"
+        },
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "errors": {}
+      }
+    },
+    "modelAPIError_E500": {
+      "title": "InternalError",
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "stack": {}
+      }
+    },
+    "deleteResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {}
+    },
+    "Contact_Response": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "_id": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{24}$"
+        },
+        "__v": {
+          "type": "number"
+        }
+      }
+    },
+    "Contact": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "_id": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{24}$"
+        },
+        "__v": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "email"
+      ]
+    },
+    "Contact_Update": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "_id": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{24}$"
+        }
+      }
+    }
+  }
+}</code></pre>
+<p>After that you could paste the link into <a href="http://editor.swagger.io/#/">swagger-editor</a> and
+work with your api documentation with that tool, generating preffered client or server project templates.
+</p>
+  <hr/>
+    <a name="install"></a>
+    <h2>Installation</h2>
+    <pre class="prettyprint source lang-shell"><code>npm up merest
+npm i --save merest-swagger</code></pre>
+    <p>After <strong>merest-swagger</strong> will be installed you could import it into your project instead of <strong>merest</strong>.
+<pre class="prettyprint lang-javascript"><code>'use strict;'
+const merest = require('merest-swagger'); // insted of: require('merest');
+...</code></pre>
+    <p>However <strong>merest-swagger</strong> requires <strong>merest</strong> to be also installed but
+      it doesn't install the <strong>merest</strong> directly. It is crutial to add support into you project correctly.</p>
+
+    <h3>Recommended Installation</h3>
+    <pre class="prettyprint source lang-shell"><code>npm i --save merest merest-swagger mongoose express body-parser method-override</code></pre>
+
+    <h3>Development</h3>
+<pre class="prettyprint source lang-shell"><code>git clone https://github.com/DScheglov/merest-swagger.git
+cd merest-swagger
+npm install
+npm run-script test-loc
+</code></pre>
+
+<hr/>
+<a name='api-conf'></a>
+<h2>API Configuration</h2>
+<p>In order to provide correct swagger documentation you should assign
+API Application parameters correctly:</p>
+<ul>
+  <li><strong>title</strong>: <code>String</code> - The title of API.</li>
+  <li><strong>version</strong>: <code>String</code> - The version of API.</li>
+  <li><strong>path</strong>: <code>String</code> - The path of api root. The application doesn't mount it self on this path.</li>
+  <li><strong>host</strong>: <code>String</code> - The host to reach API.</li>
+</ul>
+
+<p>You could do it during the <code>ModelAPIExpress</code> construction:</p>
+<pre class="prettypring lang-javascript"><code>const api = new merest.ModelAPIExpress({
+  title: 'Cool API',
+  version: '0.0.1',
+  path: '/api/v1',
+  host: 'mydomain.com'
+})</code></pre>
+
+<p>Also you could to pass the same parameters to the swagger-support methods
+(<code>swaggerDoc()</code>, <code>exposeSwagger()</code>, <code>exposeSwaggerUi()</code>).
+Please, consider that the parameters could be aplied only one time, so the subsequent
+assignment will have no effect.</p>
+
+<a name="document"></a>
+<h2>Creating <code>swagger.json</code></h2>
+<p>In order to create <strong>swagger</strong> documentation, just
+call <code>swaggerDoc()</code> method after all models will be exposed:
+</p>
+<pre class="prettyprint lang-javascript"><code>...
+api.expose(lastModel);
+console.dir(api.swaggerDoc(), { depth: null });</code></pre>
+
+<p>The swagger document will be created only one time. All subsiquent calls of
+<code>swaggerDoc()</code> will return the same document.
+If in some reason you need to avoid this behavior, just rest the <code>__swaggerDoc</code>
+field of <code>ModelAPIExpress</code> instance:</p>
+
+<pre class="prettyprint lang-javascript"></code>  ...
+  let swaggerDoc = api.swaggerDoc();
+  ...
+  api.expose(oneMoreModel);
+  api.__swaggerDoc = null;
+
+  swaggerDoc = api.swaggerDoc(); // this call will already consider the oneModeModel exposed
+  ...</code></pre>
+
+<p>If you don't assign the API configuration parameters before <code>swaggerDoc</code>
+  method call you could path them into this call:</p>
+  <pre class="prettyprint lang-javascript"><code>...
+  api.expose(lastModel);
+  let swaggerDoc = api.swaggerDoc({
+    title: 'Cool API',
+    version: '0.0.1',
+    path: '/api/v1',
+    host: 'mydomain.com'
+  });</code></pre>
+
+<a name="api-docs"></a>
+<h2>Exposing the api-docs</h2>
+The <strong>merest-swagger</strong> allows to expose the swagger document via your api.
+To do so just call the <code>exposeSwagger()</code> method of <code>ModelAPIExpress</code>
+instance:</p>
+<pre class="prettyprint lang-javascript"><code>...
+const api = merest.ModelAPIExpress({
+  title: 'Cool API',
+  version: '0.0.1',
+  path: '/api/v1',
+  host: 'mydomain.com'
+});
+api.expose(aModel);
+api.exposeSwagger('/api-docs', {
+  beautify: true,
+  cors: true
+});</code></pre>
+
+<p>The method accepts two parameters (the both are optional):</p>
+<ul>
+  <li><strong>path</strong> - the path to mount the swagger document (<code>'/swagger.json'</code> by default)</li>
+  <li><strong>options</strong> - the swagger document exposition options
+    <ul>
+      <li><strong>options.beautify</strong>: <code>String</code> | <code>Bolean</code> -- the same-named parameter of <code>JSON.stringify()</code></li>
+      <li><strong>options.cors</strong>: <code>Bolean</code> -- the flag indicated swagger document should be exposed with CORS headers (the default value is true)</li>
+    </ul>
+  </li>
+</ul>
+<p>If you don't assign the API configuration parameters before <code>exposeSwagger</code>
+  method call you could path them into this call</p>
+
+
+<a name="swagger-ui"></a>
+<h2>Embeding swagger-ui</h2>
+<p>The most showy way to touch the api is to use the
+  <a href="https://github.com/swagger-api/swagger-ui" alt="swagger-ui guthub repo">swagger-ui</a>.
+</p>
+
+  <p>You could follow the instructions of the <strong>swagger-api</strong> project: clone repository
+  setup some server and use the created by the <strong>merest-swagger</strong> api documentation
+  in <strong>swagger</strong> format.</p>
+
+  <p>But the <strong>merest-swagger</strong> allows you to embed this Swagger User interface
+    in easest way by calling method <code>exposeSwaggerUi()</code> of <code>ModelAPIExpress</code>
+    instance:</p>
+<pre class="prettyprint lang-javascript"><code>...
+const api = merest.ModelAPIExpress({
+  title: 'Cool API',
+  version: '0.0.1',
+  path: '/api/v1',
+  host: 'mydomain.com'
+});
+api.expose(aModel);
+api.exposeSwaggerUi({
+  swaggerDoc: '/api-docs'
+});</code></pre>
+
+<p>The method accepts two parameters (the both are optional):</p>
+<ul>
+  <li><strong>path</strong> - the path to mount the swagger-ui (<code>'/swagger-ui'</code> by default)</li>
+  <li><strong>options</strong> - the swagger-ui exposition options
+    <ul>
+      <li><strong>options.swaggerDoc</strong>: <code>String</code> -- the path to mount swagger document if it is not mounted yet</li>
+    </ul>
+  </li>
+</ul>
+<p>The <code>options</code> parameter could contain keys for <a href="#api-docs">swagger document exposition</a>, such as
+  <code>beautify</code> or <code>cors</code>.
+</p>
+<p>Also if you don't assign the API configuration parameters before <code>exposeSwaggerUi</code>
+  method call you could path them into this call</p>
+
+      <br class="clear">
+      <hr>
+      <a href='installation.html'>Next (Installation) ></a>
+    </article>
+</section>
+</div>
+
+<nav><h2>
+  <a href="index.html">merest</a>
+</h2>
+
+<h3><a href="installation.html">Installation</a></h3>
+<ul>
+  <li><a href="installation.html#prerequisites">Prerequisites</a></li>
+  <li><a href="installation.html#npm-install">npm installation</a></li>
+  <li><a href="installation.html#development">Development</a></li>
+</ul>
+
+<h3><a href="cook-book.html">Cook-book</a></h3>
+
+<h3><a href="conf-levels.html">API Configuration</a></h3>
+<ul>
+  <li><a href="conf-levels.html">Configuration levels</a></li>
+  <li><a href="conf-app.html">API Application</a></li>
+  <li><a href="conf-router.html">Router</a></li>
+  <li><a href="conf-end-points.html">End-point</a></li>
+  <li><a href="conf-methods.html">Model methods</a></li>
+</ul>
+
+<h3><a href="end-points.html">API Requests and Responses</a></h3>
+<ul>
+  <li><a href="end-points.html">Common reponses</a></li>
+  <li><a href="end-points.html#ep_options">Options</a></li>
+  <li><a href="end-points.html#ep_search">Search</a></li>
+  <li><a href="end-points.html#ep_create">Create</a></li>
+  <li><a href="end-points.html#ep_details">Details</a></li>
+  <li><a href="end-points.html#ep_update">Update</a></li>
+  <li><a href="end-points.html#ep_delete">Delete</a></li>
+  <li><a href="end-points.html#transform-response">Custom response</a></li>
+</ul>
+
+<h3><a href="swagger.html">Swagger support</a></h3>
+<ul>
+  <li><a href="swagger.html#install">Installation</a></li>
+  <li><a href="swagger.html#api-conf">Configure API</a></li>
+  <li><a href="swagger.html#document">Creating <code>swagger.json</code></a></li>
+  <li><a href="swagger.html#api-docs">Exposing the api-docs</a></li>
+  <li><a href="swagger.html#swagger-ui">Embedded swagger-ui</a></li>
+</ul>
+
+<h3>Specifications</h3>
+<ul>
+  <li><a href="ModelAPIExpress.html">ModelAPIExpress</a></li>
+  <li><a href="merest-swagger.html">Swagger-support methods</a></li>
+  <li><a href="ModelAPIRouter.html">ModelAPIRouter</a></li>
+  <li><a href="ModelAPIError.html">ModelAPIError</a></li>
+</ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated with <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
