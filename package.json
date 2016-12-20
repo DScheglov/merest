@@ -1,6 +1,6 @@
 {
   "name": "merest",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Express based REST-full API for Mongoose models",
   "main": "index.js",
   "directories": {

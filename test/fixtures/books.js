@@ -2,6 +2,7 @@ var ObjectId = require("mongoose").Types.ObjectId;
 
 module.exports = exports = [
     {
+      "_id": ObjectId("564e0da0105badc887ef1c42"),
     	"title": "What Have the Police Been Doing?",
       "year": 1866,
       "author": ObjectId("564e0da0105badc887ef1d41"), // Mark Twain
