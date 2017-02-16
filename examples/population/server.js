@@ -1,35 +1,33 @@
-var mongoose = require('mongoose');
-var express = require('express');
-var bodyParser = require('body-parser');
-var methodOverride = require('method-override'); // to support HTTP OPTIONS
-var api = require('./api');
-var fixtures = {
+'use strict';
+
+const mongoose = require('mongoose');
+const express = require('express');
+const bodyParser = require('body-parser');
+const methodOverride = require('method-override'); // to support HTTP OPTIONS
+const api = require('./api');
+const fixtures = {
   people: require('./fixtures/people'),
   books: require('./fixtures/books')
 }
 
-var Book = mongoose.model('Book');
-var Person = mongoose.model('Person');
+const Book = mongoose.model('Book');
+const Person = mongoose.model('Person');
 
-
+mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/merest-sample');
 
-Book.remove({
-}).then(function () {
-  return Person.remove({});
-}).then(function () {
-  return Person.collection.insert(fixtures.people);
-}).then(function () {
-  return Book.collection.insert(fixtures.books);
-}).then(function () {
-  return runServer();
-}).catch(function (err) {
-  console.error('Error: ' + err.message);
-  return err;
-});
+Book.remove({})
+  .then( () => Person.remove({}) )
+  .then( () => Person.collection.insert(fixtures.people) )
+  .then( () => Book.collection.insert(fixtures.books) )
+  .then( () => runServer() )
+  .catch( err => {
+    console.error('Error: ' + err.message);
+    return err;
+  });
 
 function runServer() {
-  var app = express();
+  const app = express();
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));

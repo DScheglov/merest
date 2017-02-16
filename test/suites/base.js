@@ -1,17 +1,19 @@
-var async = require('async');
-var mongoose = require('mongoose');
-var request = require("request");
-var util = require("util");
-var assert = require('assert');
+'use strict';
 
-var app = require('../setup/app');
-var db = require('../setup/db');
-var models = require('../models');
-var api = require("../../lib");
+const async = require('async');
+const mongoose = require('mongoose');
+const request = require("request");
+const util = require("util");
+const assert = require('assert');
+
+const app = require('../setup/app');
+const db = require('../setup/db');
+const models = require('../models');
+const api = require("../../lib");
 
 
-var testPort = 30023;
-var testUrl = 'http://127.0.0.1:' + testPort;
+const testPort = 30023;
+const testUrl = 'http://127.0.0.1:' + testPort;
 
 describe("Simplest API use. Rest Full", function (done) {
 
@@ -317,26 +319,6 @@ describe("Simplest API use. Rest Full", function (done) {
     });
   });
 
-  it("POST /api/v1/people/ 406 -- failing to update a specific Person by using interface of create-method", function(done) {
-    models.Person.findOne({}, function (err, p) {
-      assert.ok(!err);
-      assert.ok(p._id);
-      request.post({
-        url: util.format('%s/api/v1/people/', testUrl),
-        json: p.toJSON()
-      }, function (err, res, body) {
-        assert.ok(!err);
-        assert.equal(res.statusCode, 406);
-        if (typeof(body) == "string") {
-          body = JSON.parse(body);
-        }
-        assert.equal(body.error, true);
-        assert.equal(body.message, "This method doesn't allow to update a(n) Person");
-        done();
-      });
-    });
-  });
-
   it("DELETE /api/v1/people/:id 404 -- try to delete Person by unexisting id", function(done) {
     var id = mongoose.Types.ObjectId();
     request.post({
@@ -498,14 +480,11 @@ describe("Searching by PUT-method", function (done) {
         body = JSON.parse(body);
       }
       assert.equal(body.length, 6);
-      var searhByPut = false;
-      for (i=0; i<body.length && !searhByPut; i++) {
-        searhByPut = (
-          body[i][0] == "put" &&
-          body[i][1] == "/api/v1/people/" &&
-          body[i][2] == "List/Search all people"
-        );
-      }
+      const searhByPut = body.find(b => (
+        b[0] == "put" &&
+        b[1] == "/api/v1/people/" &&
+        b[2] == "List/Search all people"
+      ));
       assert.ok(searhByPut);
       done();
     });

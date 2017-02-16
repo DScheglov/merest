@@ -419,30 +419,6 @@ describe("Response transformation", function (done) {
     });
   });
 
-  it("POST /api/v1/people/ 406 -- should respond with meta data", function(done) {
-    models.Person.findOne({}, function (err, p) {
-      assert.ok(!err);
-      assert.ok(p._id);
-      request.post({
-        url: util.format('%s/api/v1/people/', testUrl),
-        json: p.toJSON()
-      }, function (err, res, body) {
-        assert.ok(!err);
-        assert.equal(res.statusCode, 200);
-        if (typeof(body) == "string") {
-          body = JSON.parse(body);
-        }
-        assert.ok(body.meta);
-        assert.equal(body.meta.status, 406);
-        assert.equal(body.meta.model, 'Person');
-        assert.equal(body.meta.operation, 'create');
-        assert.ok(body.errors);
-        assert.equal(body.meta.message, "This method doesn't allow to update a(n) Person");
-        done();
-      });
-    });
-  });
-
   it("DELETE /api/v1/people/:id 404 -- try to delete Person by unexisting id", function(done) {
     var id = mongoose.Types.ObjectId();
     request.post({
