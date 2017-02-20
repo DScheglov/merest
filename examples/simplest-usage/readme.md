@@ -74,10 +74,17 @@ Output:
 Express server is listening on port 1337
 ```
 
+To beautify the json presentation let's install js-beautify:
+```shell
+# use sudo if needed
+npm install -g js-beautify
+```
+
+
 -----------------------------------------------------------
 Calling API:
 ```shell
-curl -X OPTIONS http://localhost:1337/api/v1/
+curl -s -X OPTIONS http://localhost:1337/api/v1/ | js-beautify
 ```
 
 
@@ -97,7 +104,7 @@ Output:
 ----------------------------------------------
 Posting new vector
 ```shell
-curl -H "Content-Type: application/json" -X POST -d '{"x": 0, "y": 777}' http://localhost:1337/api/v1/vectors
+curl -s -H "Content-Type: application/json" -X POST -d '{"x": 0, "y": 777}' http://localhost:1337/api/v1/vectors | js-beautify && echo
 ```
 
 Output:
@@ -109,7 +116,7 @@ Output:
 ----------------------------------------------
 Posting one more vector
 ```shell
-curl -H "Content-Type: application/json" -X POST -d '{"x": -1, "y": 3}' http://localhost:1337/api/v1/vectors
+curl -s -H "Content-Type: application/json" -X POST -d '{"x": -1, "y": 3}' http://localhost:1337/api/v1/vectors | js-beautify && echo
 ```
 
 Output:
@@ -120,7 +127,7 @@ Output:
 ----------------------------------------------
 Listing all vectors:
 ```shell
-curl -g http://localhost:1337/api/v1/vectors
+curl -s -g http://localhost:1337/api/v1/vectors | js-beautify && echo
 ```
 Output:
 ```shell
