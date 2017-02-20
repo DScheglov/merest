@@ -9,71 +9,73 @@ in `require` calls.
 
 models.js
 ```javascript
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+'use strict';
 
-var VectorSchema = new Schema({
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const VectorSchema = new Schema({
   x: Number,
   y: Number,
-  label: String,
-  info : {
-    d: Date,
-    tags: [String]
-  }
+  label: String
 });
 
-var Vector = mongoose.model('Vector', VectorSchema);
+const Vector = mongoose.model('Vector', VectorSchema);
+
 module.exports = exports = {
   Vector: Vector
-};
-```
+};```
 
 api.js
 ```javascript
-var merest = require('merest');
-var models = require('./models');
+'use strict';
 
-var api = new merest.ModelAPIExpress();
+const merest = require('merest');
+const models = require('./models');
+
+const api = new merest.ModelAPIExpress();
 api.expose(models.Vector);
 
-module.exports = exports = api;
-```
+module.exports = exports = api;```
+
 server.js
 ```javascript
-var mongoose = require('mongoose');
-var express = require('express');
-var bodyParser = require('body-parser');
-var methodOverride = require('method-override'); // to support HTTP OPTIONS
-var api = require('./api');
+'use strict';
 
+const mongoose = require('mongoose');
+const express = require('express');
+const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
+
+mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/merest-sample');
 
-var app = express();
+const app = express();
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride());
 
-app.use('/api/v1', api); // exposing our API
+app.use('/api/v1', require('./api')); // exposing our API
 
 app.listen(1337, function(){
-  console.log('Express server listening on port 1337');
-});
-```
+  console.log('Express server is listening on port 1337');
+});```
+
 -----------------------------------------------------------
 Running project:
 ```shell
-node server
-```
+node server```
+
 Output:
 ```shell
-Express server is listening on port 1337
-```
+Express server is listening on port 1337```
+
 -----------------------------------------------------------
 Calling API:
 ```shell
-curl -X OPTIONS http://localhost:1337/api/v1/
-```
+curl -X OPTIONS http://localhost:1337/api/v1/```
+
+
 Output:
 ```shell
 [
@@ -84,38 +86,39 @@ Output:
   ["get", "/api/v1/vectors/:id", "Find a Vector by Id"],
   ["post", "/api/v1/vectors/:id", "Find a Vector by Id and update it (particulary)"],
   ["delete", "/api/v1/vectors/:id", "Find a Vector by Id and delete it."]
-]
-```
+]```
+
 ----------------------------------------------
-Posting new vertical vector
+Posting new vector
 ```shell
-curl -H "Content-Type: application/json" -X POST -d '{"x": 0, "y": 777}' http://localhost:1337/api/v1/vectors
-```
+curl -H "Content-Type: application/json" -X POST -d '{"x": 0, "y": 777}' http://localhost:1337/api/v1/vectors```
+
 Output:
 ```shell
-{"x": 0, "y": 777, "__v": 0, "info": {"tags":[]}, "_id": "..."}
-```
+{ "_id": "....................", "x": 0, "y": 777, "__v": 0 }```
+
+
 ----------------------------------------------
-Posting one more new vertical vector
+Posting one more vector
 ```shell
 curl -H "Content-Type: application/json" -X POST -d '{"x": -1, "y": 3}' http://localhost:1337/api/v1/vectors
 ```
 Output:
 ```shell
-{"x": -1, "y": 3, "__v": 0, "info": {"tags":[]}, "_id": "..."}
-```
+{  "_id": "....................", "x": -1, "y": 3, "__v": 0 } ```
+
+
 ----------------------------------------------
-Listing all vertical vectors:
+Listing all vectors:
 ```shell
-сurl -g http://localhost:1337/api/v1/vectors
+curl -g http://localhost:1337/api/v1/vectors
 ```
 Output:
 ```shell
 [
-  {"x": 0, "y": 777, "__v": 0, "info": {"tags":[]}, "_id": "..."},
-  {"x": -1, "y": 3, "__v": 0, "info": {"tags":[]}, "_id": "..."}
-]
-```
+  {"_id": "....................", "x": 0, "y": 777, "__v": 0 },
+  {"_id": "....................", "x": -1, "y": 3, "__v": 0 }
+]```
 
 ----------------------------------------------
 Also you can run this example in this way:
@@ -124,9 +127,8 @@ Also you can run this example in this way:
 git clone https://github.com/DScheglov/merest.git
 cd merest
 npm install
-node examples/simplest-usage/server
-```
+node examples/simplest-usage/server```
+
 Output:
 ```shell
-Express server is listening on port 1337
-```
+Express server is listening on port 1337```

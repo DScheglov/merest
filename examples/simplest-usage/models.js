@@ -1,17 +1,21 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+'use strict';
 
-var VectorSchema = new Schema({
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const VectorSchema = new Schema({
   x: Number,
   y: Number,
-  label: String,
-  info : {
-    d: Date,
-    tags: [String]
-  }
+  label: String
 });
 
-var Vector = mongoose.model('Vector', VectorSchema);
+VectorSchema.get('label', function () {
+  console.dir('label - get called')
+  return this.label || `(${this.x}; ${this.y})`;
+})
+
+const Vector = mongoose.model('Vector', VectorSchema);
+
 module.exports = exports = {
   Vector: Vector
 };

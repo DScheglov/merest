@@ -8,7 +8,7 @@
 It creates pointed bellow end-points:
 
 For each api-application:
- - `all api options`: **OPTIONS ..\\ **
+ - `all api options`: **OPTIONS ..\\**
 
 For each exposed model
  - `model api options`: **OPTIONS ..\\model-plural-name\\**

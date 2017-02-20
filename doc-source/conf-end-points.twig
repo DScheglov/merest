@@ -23,6 +23,7 @@ api.expose(models.Book, {
 <li><strong>fields</strong>: <code>Object|Array|String</code> - Mongoose field-selection parameter</li>
 <li><strong>readonly</strong>: <strong>reserved</strong>,</li>
 <li><strong>queryFields</strong>: <code>Object</code> - keys of the objects are names of fields. If value of the key is equal to false, the correspondent field will be excluded from the query. Affects on <code>search</code> end-point only.</li>
+<li><strong>readonly</strong>: <code>Array|Object|String</code> - the list of fields that couldn't be passed to the request. If <code>!</code> specified after the field name and this fields is in request, the API will raise an exception - 422 - Invalid entity </li>
 <li><strong>populate</strong>: <code>Array|Object|String</code> - Mongoose field population parameter</li>
 <li><strong>skip</strong>: <code>Boolean</code> - allows or disables skipping documents in the search result. Affects on <code>search</code> end-point only.</li>
 <li><strong>limit</strong>: <code>Boolean</code> - allows on denies limitation of documents in the search result. Affects on <code>search</code> end-point only.</li>

@@ -1,7 +1,9 @@
-var merest = require('../../lib');
-var models = require('./models');
+'use strict';
 
-var api = new merest.ModelAPIExpress();
+const merest = require('../../lib');
+const models = require('./models');
+
+const api = new merest.ModelAPIExpress();
 api.expose(models.Vector);
 
 module.exports = exports = api;
