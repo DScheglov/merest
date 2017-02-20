@@ -12,9 +12,8 @@ in `require` calls.
 'use strict';
 
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const VectorSchema = new Schema({
+const VectorSchema = new mongoose.Schema({
   x: Number,
   y: Number,
   label: String
