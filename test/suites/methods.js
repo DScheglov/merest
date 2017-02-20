@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async');
 var mongoose = require('mongoose');
 var request = require("request");
@@ -52,15 +54,12 @@ describe("Exposing methods explicitly (HTTP POST)", function (done) {
       if (typeof(body) == "string") {
         body = JSON.parse(body);
       }
-
       assert.equal(body.length, 7);
-      var i;
-      for (i=0; i<body.length; i++) {
-        if (body[i][0] == 'post' &&
-            body[i][1] == "/api/v1/people/:id/reverse" &&
-            body[i][2] == "Reverse letters in firstName and in lastName of specified Person") break;
-      }
-      assert.notEqual(i, body.length);
+      assert.ok(body.find(b => (
+        b[0] == 'post' && b[1] == "/api/v1/people/:id/reverse" &&
+        b[2] == "Reverse letters in firstName and in lastName of specified Person"
+      )));
+
       done();
     });
   });
@@ -365,7 +364,6 @@ describe("Exposing methods explicitly (HTTP GET + path)", function (done) {
 
 });
 
-
 describe("Exposing methods explicitly (HTTP GET + path + exec)", function (done) {
 
   before(function (done) {
@@ -474,7 +472,6 @@ describe("Exposing methods explicitly (HTTP GET + path + exec)", function (done)
   });
 
 });
-
 
 describe("Exposing methods implicitly", function (done) {
 
@@ -836,7 +833,6 @@ describe("Exposing new methods", function (done) {
   });
 
 });
-
 
 describe("Exposing all methdos and the new one", function (done) {
 

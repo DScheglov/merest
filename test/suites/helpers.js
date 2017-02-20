@@ -81,56 +81,62 @@ describe('flat()', function () {
     assert.deepEqual(helpers.flat(obj), obj);
   });
 
-  it ('should exclude some paths', function() {
-    var obj = {
-      x: '1',
-      y: 2,
-      z: {
-        a: 1,
-        b: {
-          c: 2
-        },
-        t: {
-          a: 7,
-          b: 8,
-          c: 9
-        }
-      }
-    };
-    var exclude = {
-      'z.a': true,
-      y: true,
-      'z.t': true
-
-    }
-    assert.deepEqual(helpers.flat(obj, exclude), {
-      x: 1,
-      'z.b.c': 2
-    });
-  });
-
 });
 
 describe('normalizeReadonly', function() {
 
   it('should process string parameter', function() {
     assert.deepEqual(
-      helpers.normalizeReadonly('a b c'),
-      { a: true, b: true, c: true }
+      helpers.normalizeReadonly('a b! c'),
+      [
+        { name: 'a', path: /^a$/, strict: false, message: null },
+        {
+          name: 'b', path: /^b$/, strict: true,
+          message: 'Couldn\'t modify path <b>'
+        },
+        { name: 'c', path: /^c$/, strict: false, message: null }
+      ]
     )
   });
 
   it('should process array parameter', function() {
     assert.deepEqual(
-      helpers.normalizeReadonly(['a', 'b', 'c']),
-      { a: true, b: true, c: true }
+      helpers.normalizeReadonly(['a', 'b!', 'c']),
+      [
+        { name: 'a', path: /^a$/, strict: false, message: null },
+        {
+          name: 'b', path: /^b$/, strict: true,
+          message: 'Couldn\'t modify path <b>'
+        },
+        { name: 'c', path: /^c$/, strict: false, message: null }
+      ]
     )
   });
 
   it('should process object parameter', function() {
     assert.deepEqual(
-      helpers.normalizeReadonly({ a: true, b: true, c: true }),
-      { a: true, b: true, c: true }
+      helpers.normalizeReadonly({ a: true, 'b!': true, c: true }),
+      [
+        { name: 'a', path: /^a$/, strict: false, message: null },
+        {
+          name: 'b', path: /^b$/, strict: true,
+          message: 'Couldn\'t modify path <b>'
+        },
+        { name: 'c', path: /^c$/, strict: false, message: null }
+      ]
+    )
+  });
+
+  it('should process object parameter with false and string values', function() {
+    assert.deepEqual(
+      helpers.normalizeReadonly({
+        a: true,
+        'b!': false,
+        c: 'Don\'t touch c' }),
+      [
+        { name: 'a', path: /^a$/, strict: false, message: null },
+        { name: 'c', path: /^c$/, strict: false, message: 'Don\'t touch c' }
+      ]
     )
   });
 
@@ -155,37 +161,145 @@ describe('normalizeReadonly', function() {
     )
   });
 
-  it('should return other default value if it is assigned and undefined passed', function() {
-    assert.deepEqual(
-      helpers.normalizeReadonly(undefined, { _id: true }),
-      { _id: true }
-    );
-  });
-
-  it('should return other default value if it is assigned and empty array passed', function() {
-    assert.deepEqual(
-      helpers.normalizeReadonly([], { _id: true }),
-      { _id: true }
-    );
-  });
-
   it('should return other default value if it is assigned and number, true or date passed', function() {
     assert.deepEqual(
-      helpers.normalizeReadonly(2, { _id: true }),
-      { _id: true }
+      helpers.normalizeReadonly(2),
+      null
     );
 
     assert.deepEqual(
-      helpers.normalizeReadonly(true, { _id: true }),
-      { _id: true }
+      helpers.normalizeReadonly(true),
+      null
     );
 
     assert.deepEqual(
-      helpers.normalizeReadonly(new Date('2017-01-01'), { _id: true }),
-      { _id: true }
+      helpers.normalizeReadonly(new Date('2017-01-01')),
+      null
     );
   });
 
+  it('should process string parameter with templated path', function() {
+    assert.deepEqual(
+      helpers.normalizeReadonly('a b! **._id t.*.a!'),
+      [
+        {
+          name: 'a', path: /^a$/, strict: false, message: null
+        }, {
+          name: 'b', path: /^b$/, strict: true,
+          message: 'Couldn\'t modify path <b>'
+        }, {
+          name: '**._id',
+          path: /^([^.]+\.?)*\._id$/,
+          strict: false,
+          message: null
+        }, {
+          name: 't.*.a',
+          path: /^t\.[^.]+\.a$/,
+          strict: true,
+          message: 'Couldn\'t modify path <t.*.a>'
+        }
+      ]
+    )
+  });
 
+});
+
+describe('validateReadonly', function() {
+
+  it('should return flatted data for empty rules list', function () {
+    let data = {
+      a: 1,
+      b: {s: '232'}
+    };
+    assert.deepEqual(
+      helpers.validateReadonly(helpers.flat(data), []),
+      helpers.flat(data)
+    );
+  });
+
+  it('should exculde non-strictly frozed fields', function () {
+    let data = helpers.flat({
+      a: 1,
+      b: {s: '232', c: 'c'}
+    });
+    let rules = helpers.normalizeReadonly('b.c')
+    assert.deepEqual(
+      helpers.validateReadonly(data, rules),
+      { a: 1, 'b.s': '232'}
+    );
+  });
+
+  it('should throw ModelAPIError if object contains _id fields', function () {
+    let data = helpers.flat({
+      _id: 1,
+      b: {
+        _id: 1,
+      },
+      c: {
+        t: { _id: 2 }
+      }
+    });
+    let rules = helpers.normalizeReadonly('_id! **._id!')
+    assert.throws(
+      () => helpers.validateReadonly(data, rules),
+      (err) => {
+        assert.deepEqual(err, {
+          message: 'Readonly constraint vialated',
+          code: 422,
+          errors: {
+            _id: {
+              type: 'readonly',
+              message: 'Couldn\'t modify path <_id>',
+              path: '_id'
+            },
+            'b._id': {
+              type: 'readonly',
+              message: 'Couldn\'t modify path <**._id>',
+              path: 'b._id'
+            },
+            'c.t._id': {
+              type: 'readonly',
+              message: 'Couldn\'t modify path <**._id>',
+              path: 'c.t._id'
+            }
+          }
+        })
+        return true;
+      }
+    );
+  });
+
+  it('should throw ModelAPIError if object contains _id (*) fields', function () {
+    let data = helpers.flat({
+      _id: 1,
+      b: {
+        _id: 1,
+      },
+      c: {
+        t: { _id: 2 },
+        d: {
+          t : { _id: 3 }
+        }
+      }
+    });
+    let rules = helpers.normalizeReadonly('_id c.*._id!')
+    assert.throws(
+      () => helpers.validateReadonly(data, rules),
+      (err) => {
+        assert.deepEqual(err, {
+          message: 'Readonly constraint vialated',
+          code: 422,
+          errors: {
+            'c.t._id': {
+              type: 'readonly',
+              message: 'Couldn\'t modify path <c.*._id>',
+              path: 'c.t._id'
+            }
+          }
+        })
+        return true;
+      }
+    );
+  });
 
 });
