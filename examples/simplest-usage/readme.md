@@ -7,7 +7,7 @@ You can use you own project structure just mind the correct paths
 in `require` calls.
 
 
-models.js
+**models.js**
 ```javascript
 'use strict';
 
@@ -24,9 +24,10 @@ const Vector = mongoose.model('Vector', VectorSchema);
 
 module.exports = exports = {
   Vector: Vector
-};```
+};
+```
 
-api.js
+**api.js**
 ```javascript
 'use strict';
 
@@ -36,9 +37,10 @@ const models = require('./models');
 const api = new merest.ModelAPIExpress();
 api.expose(models.Vector);
 
-module.exports = exports = api;```
+module.exports = exports = api;
+```
 
-server.js
+**server.js**
 ```javascript
 'use strict';
 
@@ -59,21 +61,25 @@ app.use('/api/v1', require('./api')); // exposing our API
 
 app.listen(1337, function(){
   console.log('Express server is listening on port 1337');
-});```
+});
+```
 
 -----------------------------------------------------------
 Running project:
 ```shell
-node server```
+node server
+```
 
 Output:
 ```shell
-Express server is listening on port 1337```
+Express server is listening on port 1337
+```
 
 -----------------------------------------------------------
 Calling API:
 ```shell
-curl -X OPTIONS http://localhost:1337/api/v1/```
+curl -X OPTIONS http://localhost:1337/api/v1/
+```
 
 
 Output:
@@ -86,16 +92,19 @@ Output:
   ["get", "/api/v1/vectors/:id", "Find a Vector by Id"],
   ["post", "/api/v1/vectors/:id", "Find a Vector by Id and update it (particulary)"],
   ["delete", "/api/v1/vectors/:id", "Find a Vector by Id and delete it."]
-]```
+]
+```
 
 ----------------------------------------------
 Posting new vector
 ```shell
-curl -H "Content-Type: application/json" -X POST -d '{"x": 0, "y": 777}' http://localhost:1337/api/v1/vectors```
+curl -H "Content-Type: application/json" -X POST -d '{"x": 0, "y": 777}' http://localhost:1337/api/v1/vectors
+```
 
 Output:
 ```shell
-{ "_id": "....................", "x": 0, "y": 777, "__v": 0 }```
+{ "_id": "....................", "x": 0, "y": 777, "__v": 0 }
+```
 
 
 ----------------------------------------------
@@ -103,10 +112,11 @@ Posting one more vector
 ```shell
 curl -H "Content-Type: application/json" -X POST -d '{"x": -1, "y": 3}' http://localhost:1337/api/v1/vectors
 ```
+
 Output:
 ```shell
-{  "_id": "....................", "x": -1, "y": 3, "__v": 0 } ```
-
+{  "_id": "....................", "x": -1, "y": 3, "__v": 0 }
+```
 
 ----------------------------------------------
 Listing all vectors:
@@ -118,7 +128,8 @@ Output:
 [
   {"_id": "....................", "x": 0, "y": 777, "__v": 0 },
   {"_id": "....................", "x": -1, "y": 3, "__v": 0 }
-]```
+]
+```
 
 ----------------------------------------------
 Also you can run this example in this way:
@@ -127,8 +138,10 @@ Also you can run this example in this way:
 git clone https://github.com/DScheglov/merest.git
 cd merest
 npm install
-node examples/simplest-usage/server```
+node examples/simplest-usage/server
+```
 
 Output:
 ```shell
-Express server is listening on port 1337```
+Express server is listening on port 1337
+```
