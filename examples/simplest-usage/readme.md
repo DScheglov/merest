@@ -74,7 +74,7 @@ Output:
 Express server is listening on port 1337
 ```
 
-To beautify the json presentation let's install js-beautify:
+To beautify the json presentation in console let's install `js-beautify`:
 ```shell
 # use sudo if needed
 npm install -g js-beautify
@@ -84,7 +84,7 @@ npm install -g js-beautify
 -----------------------------------------------------------
 Calling API:
 ```shell
-curl -s -X OPTIONS http://localhost:1337/api/v1/ | js-beautify
+curl -s -X OPTIONS http://localhost:1337/api/v1/ | js-beautify && echo
 ```
 
 
@@ -109,7 +109,12 @@ curl -s -H "Content-Type: application/json" -X POST -d '{"x": 0, "y": 777}' http
 
 Output:
 ```shell
-{ "_id": "....................", "x": 0, "y": 777, "__v": 0 }
+{
+    "_id": "....................",
+    "x": 0,
+    "y": 777,
+    "__v": 0
+}
 ```
 
 
@@ -121,7 +126,12 @@ curl -s -H "Content-Type: application/json" -X POST -d '{"x": -1, "y": 3}' http:
 
 Output:
 ```shell
-{  "_id": "....................", "x": -1, "y": 3, "__v": 0 }
+{
+    "_id": "....................",
+    "x": -1,
+    "y": 3,
+    "__v": 0
+}
 ```
 
 ----------------------------------------------
@@ -131,10 +141,31 @@ curl -s -g http://localhost:1337/api/v1/vectors | js-beautify && echo
 ```
 Output:
 ```shell
-[
-  {"_id": "....................", "x": 0, "y": 777, "__v": 0 },
-  {"_id": "....................", "x": -1, "y": 3, "__v": 0 }
-]
+[{
+    "_id": "....................",
+    "x": 0,
+    "y": 777,
+    "__v": 0
+}, {
+    "_id": "....................",
+    "x": -1,
+    "y": 3,
+    "__v": 0
+}]
+```
+
+Listing only vertical vectors:
+```shell
+curl -s -g http://localhost:1337/api/v1/vectors?x=0 | js-beautify && echo
+```
+Output:
+```shell
+[{
+    "_id": "....................",
+    "x": 0,
+    "y": 777,
+    "__v": 0
+}]
 ```
 
 ----------------------------------------------

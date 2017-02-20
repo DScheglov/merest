@@ -86,7 +86,6 @@ describe("Using ModelAPIExpress as main application", function (done) {
 
 });
 
-
 describe("Exposing model with middleware and custom path", function (done) {
   var server, modelAPI;
 

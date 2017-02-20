@@ -76,7 +76,6 @@ describe('Bad request fireing', function (done) {
 
 });
 
-
 describe('Bad request fireing (mongoose query object)', function (done) {
 
   before(function (done) {

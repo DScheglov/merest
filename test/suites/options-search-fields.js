@@ -15,7 +15,7 @@ var testUrl = 'http://127.0.0.1:' + testPort;
 
 describe("Restrictions for search by certain fields (HTTP POST)", function (done) {
 
-  beforeEach(function (done) {
+  before(function (done) {
 
     async.waterfall([
       app.init, db.init,
@@ -39,7 +39,7 @@ describe("Restrictions for search by certain fields (HTTP POST)", function (done
     ], done);
   });
 
-  afterEach(function (done) {
+  after(function (done) {
     async.waterfall([db.close, app.close], done)
   });
 
@@ -88,7 +88,7 @@ describe("Restrictions for search by certain fields (HTTP POST)", function (done
 
 describe("Restrictions for search by certain fields (HTTP GET)", function (done) {
 
-  beforeEach(function (done) {
+  before(function (done) {
 
     async.waterfall([
       app.init, db.init,
@@ -108,7 +108,7 @@ describe("Restrictions for search by certain fields (HTTP GET)", function (done)
     ], done);
   });
 
-  afterEach(function (done) {
+  after(function (done) {
     async.waterfall([db.close, app.close], done)
   });
 

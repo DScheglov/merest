@@ -15,7 +15,7 @@ var testUrl = 'http://127.0.0.1:' + testPort;
 
 describe("Restrictions for sorting by certain fields", function (done) {
 
-  beforeEach(function (done) {
+  before(function (done) {
 
     async.waterfall([
       app.init, db.init,
@@ -35,7 +35,7 @@ describe("Restrictions for sorting by certain fields", function (done) {
     ], done);
   });
 
-  afterEach(function (done) {
+  after(function (done) {
     async.waterfall([db.close, app.close], done)
   });
 
@@ -129,7 +129,7 @@ describe("Restrictions for sorting by certain fields", function (done) {
 
 describe("Sorting, limiting and skiping with get method", function (done) {
 
-  beforeEach(function (done) {
+  before(function (done) {
 
     async.waterfall([
       app.init, db.init,
@@ -149,7 +149,7 @@ describe("Sorting, limiting and skiping with get method", function (done) {
     ], done);
   });
 
-  afterEach(function (done) {
+  after(function (done) {
     async.waterfall([db.close, app.close], done)
   });
 

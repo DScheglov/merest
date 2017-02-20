@@ -248,7 +248,6 @@ describe("Population -- only for details", function (done) {
 
 });
 
-
 describe("Population -- only for list", function (done) {
 
   before(function (done) {
@@ -327,7 +326,6 @@ describe("Population -- only for list", function (done) {
   });
 
 });
-
 
 describe("Population -- with mongoose population options", function (done) {
 

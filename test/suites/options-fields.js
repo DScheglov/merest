@@ -15,7 +15,7 @@ var testUrl = 'http://127.0.0.1:' + testPort;
 
 describe("Common fields restrictios for list and instance", function (done) {
 
-  beforeEach(function (done) {
+  before(function (done) {
 
     async.waterfall([
       app.init, db.init,
@@ -37,7 +37,7 @@ describe("Common fields restrictios for list and instance", function (done) {
     ], done);
   });
 
-  afterEach(function (done) {
+  after(function (done) {
     async.waterfall([db.close, app.close], done)
   });
 
@@ -93,7 +93,7 @@ describe("Common fields restrictios for list and instance", function (done) {
 
 describe("Separate fields restrictios for list and instance", function (done) {
 
-  beforeEach(function (done) {
+  before(function (done) {
 
     async.waterfall([
       app.init, db.init,
@@ -120,7 +120,7 @@ describe("Separate fields restrictios for list and instance", function (done) {
     ], done);
   });
 
-  afterEach(function (done) {
+  after(function (done) {
     async.waterfall([db.close, app.close], done)
   });
 

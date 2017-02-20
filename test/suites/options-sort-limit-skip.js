@@ -15,7 +15,7 @@ var testUrl = 'http://127.0.0.1:' + testPort;
 
 describe("Skip and limit allowed", function (done) {
 
-  beforeEach(function (done) {
+  before(function (done) {
 
     async.waterfall([
       app.init, db.init,
@@ -31,7 +31,7 @@ describe("Skip and limit allowed", function (done) {
     ], done);
   });
 
-  afterEach(function (done) {
+  after(function (done) {
     async.waterfall([db.close, app.close], done)
   });
 
@@ -90,7 +90,7 @@ describe("Skip and limit allowed", function (done) {
 });
 
 describe("Limitation disabled", function (done) {
-  beforeEach(function (done) {
+  before(function (done) {
 
     async.waterfall([
       app.init, db.init,
@@ -108,7 +108,7 @@ describe("Limitation disabled", function (done) {
     ], done);
   });
 
-  afterEach(function (done) {
+  after(function (done) {
     async.waterfall([db.close, app.close], done)
   });
 

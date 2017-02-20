@@ -15,7 +15,7 @@ var testUrl = 'http://127.0.0.1:' + testPort;
 
 describe("Processing 500 Internal Server Error", function (done) {
 
-  beforeEach(function (done) {
+  before(function (done) {
 
     async.waterfall([
       app.init, db.init,
@@ -39,7 +39,7 @@ describe("Processing 500 Internal Server Error", function (done) {
     ], done);
   });
 
-  afterEach(function (done) {
+  after(function (done) {
     async.waterfall([db.close, app.close], done)
   });
 
