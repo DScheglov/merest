@@ -302,4 +302,64 @@ describe('validateReadonly', function() {
     );
   });
 
+  it('should throw ModelAPIError if object contains _id fields and **_id! specified', function () {
+    let data = helpers.flat({
+      _id: 1,
+      b: {
+        _id: 1,
+      },
+      c: {
+        t: { _id: 2 }
+      }
+    });
+    let rules = helpers.normalizeReadonly('**_id!')
+    assert.throws(
+      () => helpers.validateReadonly(data, rules),
+      (err) => {
+        assert.deepEqual(err, {
+          message: 'Readonly constraint vialated',
+          code: 422,
+          errors: {
+            _id: {
+              type: 'readonly',
+              message: 'Couldn\'t modify path <**_id>',
+              path: '_id'
+            },
+            'b._id': {
+              type: 'readonly',
+              message: 'Couldn\'t modify path <**_id>',
+              path: 'b._id'
+            },
+            'c.t._id': {
+              type: 'readonly',
+              message: 'Couldn\'t modify path <**_id>',
+              path: 'c.t._id'
+            }
+          }
+        })
+        return true;
+      }
+    );
+  });
+
+  it('should exclude all _id fields if **_id specified', function () {
+    let data = helpers.flat({
+      _id: 1,
+      b: {
+        _id: 1,
+        a: 2
+      },
+      c: {
+        t: { _id: 2, x: '2' }
+      }
+    });
+    let rules = helpers.normalizeReadonly('**_id');
+    assert.deepEqual(
+      helpers.validateReadonly(data, rules),
+      {
+        'b.a': 2, 'c.t.x': '2'
+      }
+    );
+  });
+
 });
