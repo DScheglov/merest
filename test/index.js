@@ -17,3 +17,4 @@ require('./suites/helpers');
 require('./suites/empty-api-options');
 require('./suites/options-overriding-nulls');
 require('./suites/readonly');
+require('./suites/operators');

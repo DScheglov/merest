@@ -48,7 +48,6 @@ describe("Restrictions for sorting by certain fields", function (done) {
       if (typeof(body) == "string") {
         body = JSON.parse(body);
       }
-
       assert.equal(body.length, 4);
       for (var i=1;i<body.length;i++) {
         assert.ok(body[i].email >= body[i-1].email);

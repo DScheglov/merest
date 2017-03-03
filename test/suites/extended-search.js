@@ -1,20 +1,22 @@
-var async = require('async');
-var mongoose = require('mongoose');
-var request = require("request");
-var util = require('util');
-var assert = require('assert');
-var qs = require('querystring');
+'use strict';
 
-var app = require('../setup/app');
-var db = require('../setup/db');
-var models = require('../models');
-var api = require("../../lib");
+const async = require('async');
+const mongoose = require('mongoose');
+const request = require("request");
+const util = require('util');
+const assert = require('assert');
+const qs = require('querystring');
+
+const app = require('../setup/app');
+const db = require('../setup/db');
+const models = require('../models');
+const api = require("../../lib");
 
 
-var testPort = 30023;
-var testUrl = 'http://127.0.0.1:' + testPort;
+const testPort = 30023;
+const testUrl = 'http://127.0.0.1:' + testPort;
 
-var people = require('../fixtures/people');
+const people = require('../fixtures/people');
 
 describe('Searching with __<oper>', function (done) {
 
@@ -290,6 +292,72 @@ describe('Searching with __<oper>', function (done) {
       assert.ok(body.every(
         p => 'aA'.indexOf(p.firstName[0]) >= 0
       ));
+      done();
+    });
+
+  });
+
+});
+
+describe('Searching with __<oper> and restrictions', function (done) {
+
+  before(function (done) {
+
+    async.waterfall([
+      app.init, db.init,
+      db.fixtures.bind(null, {
+        Person: people,
+        Book: '../fixtures/books'
+      }),
+      function (next) {
+        var modelAPI = new api.ModelAPIExpress();
+        modelAPI.expose(models.Book, {
+          populate: 'author',
+          queryFields: {
+            year: api.operators.strict
+          }
+        });
+        modelAPI.expose(models.Person);
+        app.use('/api/v1/', modelAPI);
+        app.listen(testPort, next);
+      }
+    ], done);
+  });
+
+  after(function (done) {
+    async.waterfall([db.close, app.close], done)
+  });
+
+  it("GET /api/v1/books?year__lt=1900 200 -- <=1900 should be ignored", function (done) {
+
+    request.get({
+      url: util.format('%s/api/v1/books?year__lt=1900', testUrl)
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
+      if (typeof(body) == "string") {
+        body = JSON.parse(body);
+      }
+      assert.equal(body.length, 16);
+      assert.ok(body.some(b => b.year < 1900));
+      assert.ok(body.some(b => b.year >= 1900));
+      done();
+    });
+
+  });
+
+  it("GET /api/v1/books?year=1902 200 -- =1902 should be respected", function (done) {
+
+    request.get({
+      url: util.format('%s/api/v1/books?year=1902', testUrl)
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
+      if (typeof(body) == "string") {
+        body = JSON.parse(body);
+      }
+      assert.equal(body.length, 2);
+      assert.ok(body.some(b => b.year === 1902));
       done();
     });
 

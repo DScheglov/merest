@@ -152,8 +152,150 @@ describe("Limitation disabled", function (done) {
 
 });
 
+describe("Limitation restricted", function (done) {
+  before(function (done) {
+
+    async.waterfall([
+      app.init, db.init,
+      db.fixtures.bind(null, {
+        Person: '../fixtures/people'
+      }),
+      function (next) {
+        var modelAPI = new api.ModelAPIExpress();
+        modelAPI.expose(models.Person, {
+          limit: 2
+        });
+        app.use('/api/v1/', modelAPI);
+        app.listen(testPort, next);
+      }
+    ], done);
+  });
+
+  after(function (done) {
+    async.waterfall([db.close, app.close], done)
+  });
+
+  it("Get 1 person with _limit=1 - should return 1 records", function (done) {
+    request.get({
+      url: util.format('%s/api/v1/people?_limit=1', testUrl),
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
+      if (typeof(body) == "string") {
+        body = JSON.parse(body);
+      };
+      assert.equal(body.length, 1);
+      done();
+    });
+
+  });
+
+  it("Get 2 people with _limit=2 - should return 2 records", function (done) {
+    request.get({
+      url: util.format('%s/api/v1/people?_limit=2', testUrl),
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
+      if (typeof(body) == "string") {
+        body = JSON.parse(body);
+      };
+      assert.equal(body.length, 2);
+      done();
+    });
+
+  });
+
+  it("Get 2 people with _limit=3 - should return 2 records", function (done) {
+    request.get({
+      url: util.format('%s/api/v1/people?_limit=3', testUrl),
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
+      if (typeof(body) == "string") {
+        body = JSON.parse(body);
+      };
+      assert.equal(body.length, 2);
+      done();
+    });
+
+  });
+
+});
+
+
+describe("Limitation settings assigned wrong", function (done) {
+  before(function (done) {
+
+    async.waterfall([
+      app.init, db.init,
+      db.fixtures.bind(null, {
+        Person: '../fixtures/people'
+      }),
+      function (next) {
+        var modelAPI = new api.ModelAPIExpress();
+        modelAPI.expose(models.Person, {
+          limit: 'sdlkfhsdakjfh'
+        });
+        app.use('/api/v1/', modelAPI);
+        app.listen(testPort, next);
+      }
+    ], done);
+  });
+
+  after(function (done) {
+    async.waterfall([db.close, app.close], done)
+  });
+
+  it("Get 1 person with _limit=1 - should return 4 records", function (done) {
+    request.get({
+      url: util.format('%s/api/v1/people?_limit=1', testUrl),
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
+      if (typeof(body) == "string") {
+        body = JSON.parse(body);
+      };
+      assert.equal(body.length, 4);
+      done();
+    });
+
+  });
+
+  it("Get 2 people with _limit=2 - should return 4 records", function (done) {
+    request.get({
+      url: util.format('%s/api/v1/people?_limit=2', testUrl),
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
+      if (typeof(body) == "string") {
+        body = JSON.parse(body);
+      };
+      assert.equal(body.length, 4);
+      done();
+    });
+
+  });
+
+  it("Get 2 people with _limit=3 - should return 4 records", function (done) {
+    request.get({
+      url: util.format('%s/api/v1/people?_limit=3', testUrl),
+    }, function (err, res, body) {
+      assert.ok(!err);
+      assert.equal(res.statusCode, 200);
+      if (typeof(body) == "string") {
+        body = JSON.parse(body);
+      };
+      assert.equal(body.length, 4);
+      done();
+    });
+
+  });
+
+});
+
+
 describe("Skipping disabled", function (done) {
-  beforeEach(function (done) {
+  before(function (done) {
 
     async.waterfall([
       app.init, db.init,
@@ -171,7 +313,7 @@ describe("Skipping disabled", function (done) {
     ], done);
   });
 
-  afterEach(function (done) {
+  after(function (done) {
     async.waterfall([db.close, app.close], done)
   });
 
@@ -202,7 +344,7 @@ describe("Skipping disabled", function (done) {
 
 describe("Sorting disabled", function (done) {
 
-    beforeEach(function (done) {
+    before(function (done) {
 
       async.waterfall([
         app.init, db.init,
@@ -220,7 +362,7 @@ describe("Sorting disabled", function (done) {
       ], done);
     });
 
-    afterEach(function (done) {
+    after(function (done) {
       async.waterfall([db.close, app.close], done)
     });
 
